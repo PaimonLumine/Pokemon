@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>宝可梦属性相克表 | Pokémon Type Chart</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V9DT2HLV54"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-V9DT2HLV54');
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -31,7 +40,7 @@
             text-align: center;
             color: #333;
             margin-bottom: 10px;
-            font-size: 28px;
+            font-size: 36px;
         }
         
         .lang-switch {
@@ -40,20 +49,47 @@
         }
         
         .lang-switch button {
-            padding: 8px 20px;
+            padding: 10px 24px;
             margin: 0 5px;
             border: 2px solid #4CAF50;
             background: white;
             color: #4CAF50;
-            border-radius: 20px;
+            border-radius: 22px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             transition: all 0.3s;
         }
         
         .lang-switch button.active {
             background: #4CAF50;
             color: white;
+        }
+        
+        .export-section {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .export-btn {
+            padding: 16px 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 32px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+        }
+        
+        .export-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .export-btn:active {
+            transform: translateY(0);
         }
         
         .type-selector {
@@ -67,22 +103,22 @@
             font-weight: bold;
             margin-bottom: 15px;
             color: #333;
-            font-size: 16px;
+            font-size: 18px;
         }
         
         .type-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 15px;
         }
         
         .type-btn {
-            padding: 8px 15px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 20px;
+            border-radius: 22px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             color: white;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
@@ -118,29 +154,29 @@
         }
         
         .selected-type {
-            padding: 10px 25px;
-            border-radius: 25px;
+            padding: 12px 30px;
+            border-radius: 28px;
             color: white;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 22px;
             text-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
         
         .plus-sign {
-            font-size: 24px;
+            font-size: 32px;
             color: #666;
             font-weight: bold;
         }
         
         .clear-btn {
             margin-left: auto;
-            padding: 8px 20px;
+            padding: 10px 24px;
             background: #ff6b6b;
             color: white;
             border: none;
-            border-radius: 20px;
+            border-radius: 22px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
         }
         
         .clear-btn:hover {
@@ -155,9 +191,9 @@
         }
         
         .section-header {
-            padding: 15px 20px;
+            padding: 18px 24px;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 22px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -181,9 +217,9 @@
         
         .type-display {
             background: rgba(255,255,255,0.3);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: 6px 18px;
+            border-radius: 22px;
+            font-size: 16px;
         }
         
         .section-content {
@@ -193,12 +229,12 @@
         
         .category {
             margin-bottom: 15px;
-            padding: 15px;
+            padding: 18px;
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: flex-start;
-            gap: 15px;
+            gap: 18px;
         }
         
         .category:last-child {
@@ -206,11 +242,11 @@
         }
         
         .category-label {
-            min-width: 100px;
+            min-width: 120px;
             font-weight: bold;
-            font-size: 15px;
-            padding: 8px 12px;
-            border-radius: 8px;
+            font-size: 17px;
+            padding: 10px 14px;
+            border-radius: 10px;
             text-align: center;
         }
         
@@ -242,21 +278,21 @@
         .category-types {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             flex: 1;
         }
         
         .type-tag {
-            padding: 6px 14px;
-            border-radius: 15px;
+            padding: 8px 16px;
+            border-radius: 18px;
             color: white;
-            font-size: 13px;
+            font-size: 15px;
             font-weight: bold;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         
         .multiplier {
-            font-size: 12px;
+            font-size: 13px;
             opacity: 0.9;
             margin-left: 4px;
         }
@@ -289,7 +325,7 @@
         .ability-section {
             background: #fff8e1;
             border-radius: 15px;
-            padding: 20px;
+            padding: 24px;
             margin-bottom: 25px;
         }
         
@@ -297,45 +333,46 @@
             font-weight: bold;
             margin-bottom: 15px;
             color: #333;
+            font-size: 18px;
         }
         
         .ability-controls {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
         }
         
         .ability-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
+            gap: 12px;
+            padding: 12px;
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
         }
         
         .ability-type {
-            padding: 5px 12px;
-            border-radius: 15px;
+            padding: 6px 14px;
+            border-radius: 18px;
             color: white;
-            font-size: 13px;
+            font-size: 15px;
             font-weight: bold;
-            min-width: 60px;
+            min-width: 70px;
             text-align: center;
         }
         
         .ability-buttons {
             display: flex;
-            gap: 5px;
+            gap: 6px;
         }
         
         .ability-btn {
-            padding: 5px 12px;
+            padding: 6px 14px;
             border: 2px solid #ddd;
             background: white;
-            border-radius: 15px;
+            border-radius: 18px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
             transition: all 0.2s;
         }
@@ -366,7 +403,7 @@
             text-align: center;
             color: #666;
             margin-top: 10px;
-            font-size: 14px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -442,6 +479,12 @@
                 </div>
             </div>
         </div>
+        
+        <div class="export-section" style="margin-top: 30px;">
+            <button class="export-btn" onclick="exportToImage()" data-i18n="exportImage">
+                📷 导出为图片
+            </button>
+        </div>
     </div>
 
     <script>
@@ -478,7 +521,7 @@
             "Poison": { zh: "毒", en: "Poison", class: "type-poison" },
             "Ground": { zh: "地面", en: "Ground", class: "type-ground" },
             "Flying": { zh: "飞行", en: "Flying", class: "type-flying" },
-            "Psychic": { zh: "超能力", en: "Psychic", class: "type-psychic" },
+            "Psychic": { zh: "超能", en: "Psychic", class: "type-psychic" },
             "Bug": { zh: "虫", en: "Bug", class: "type-bug" },
             "Rock": { zh: "岩石", en: "Rock", class: "type-rock" },
             "Ghost": { zh: "幽灵", en: "Ghost", class: "type-ghost" },
@@ -495,6 +538,7 @@
                 selected: "已选择:",
                 noneSelected: "未选择",
                 clear: "清除",
+                exportImage: "📷 导出为图片",
                 abilityTitle: "特性效果 (改变防御倍率)",
                 abilityInfo: "点击按钮切换属性对防御方的伤害倍率",
                 offense: "进攻端",
@@ -519,6 +563,7 @@
                 selected: "Selected:",
                 noneSelected: "None",
                 clear: "Clear",
+                exportImage: "📷 Export Image",
                 abilityTitle: "Ability Effects (Change Defense Multiplier)",
                 abilityInfo: "Click buttons to toggle damage multiplier",
                 offense: "Offense",
@@ -903,6 +948,113 @@
             });
             
             updateDisplay();
+        }
+
+        // 导出图片功能
+        function exportToImage() {
+            const exportBtn = document.querySelector('.export-btn');
+            const originalText = exportBtn.textContent;
+            exportBtn.textContent = currentLang === 'zh' ? '生成中...' : 'Generating...';
+            exportBtn.disabled = true;
+            
+            // 获取需要导出的区域（不包括选择器和特性部分，只导出结果）
+            const offenseSection = document.querySelector('.section.offense');
+            const defenseSection = document.querySelector('.section.defense');
+            
+            // 创建临时容器
+            const tempContainer = document.createElement('div');
+            tempContainer.style.cssText = `
+                background: #f0f0f0;
+                padding: 12px;
+                border-radius: 12px;
+                width: 900px;
+                box-sizing: border-box;
+            `;
+            
+            // 克隆内容
+            const offenseClone = offenseSection.cloneNode(true);
+            const defenseClone = defenseSection.cloneNode(true);
+            
+            // 更新所有标签为当前语言
+            const updateCategoryLabels = (section) => {
+                const categories = section.querySelectorAll('.category');
+                categories.forEach(cat => {
+                    const label = cat.querySelector('.category-label');
+                    if (cat.classList.contains('super-effective')) {
+                        label.textContent = i18n[currentLang].superEffectiveLabel;
+                    } else if (cat.classList.contains('not-effective')) {
+                        label.textContent = i18n[currentLang].notEffectiveLabel;
+                    } else if (cat.classList.contains('weakness')) {
+                        label.textContent = i18n[currentLang].weaknessLabel;
+                    } else if (cat.classList.contains('resistance')) {
+                        label.textContent = i18n[currentLang].resistanceLabel;
+                    } else if (cat.classList.contains('immune')) {
+                        label.textContent = i18n[currentLang].immuneLabel;
+                    }
+                });
+                
+                // 更新 empty-msg 文本
+                const emptyMsgs = section.querySelectorAll('.empty-msg');
+                emptyMsgs.forEach(msg => {
+                    msg.textContent = i18n[currentLang].empty;
+                });
+            };
+            
+            updateCategoryLabels(offenseClone);
+            updateCategoryLabels(defenseClone);
+            
+            // 为表格行添加淡色背景（所有行都有颜色）
+            const addRowBackground = (section, color) => {
+                const categories = section.querySelectorAll('.category');
+                categories.forEach((cat) => {
+                    cat.style.background = color;
+                    cat.style.boxShadow = '0 2px 4px rgba(0,0,0,0.08)';
+                    cat.style.marginBottom = '12px';
+                });
+            };
+            
+            // 使用更深的颜色
+            addRowBackground(offenseClone, '#fff5e6');
+            addRowBackground(defenseClone, '#e6f3ff');
+            
+            // 为section添加淡色边框和背景
+            offenseClone.style.border = 'none';
+            offenseClone.style.background = '#fff';
+            offenseClone.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+            offenseClone.style.marginBottom = '6px';
+            defenseClone.style.border = 'none';
+            defenseClone.style.background = '#fff';
+            defenseClone.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+            defenseClone.style.marginBottom = '0';
+            
+            tempContainer.appendChild(offenseClone);
+            tempContainer.appendChild(defenseClone);
+            
+            document.body.appendChild(tempContainer);
+            
+            html2canvas(tempContainer, {
+                backgroundColor: '#e8e8e8',
+                scale: 2,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = `pokemon-type-chart-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // 清理
+                document.body.removeChild(tempContainer);
+                exportBtn.textContent = originalText;
+                exportBtn.disabled = false;
+            }).catch(err => {
+                console.error('Export failed:', err);
+                alert(currentLang === 'zh' ? '导出失败，请重试' : 'Export failed, please try again');
+                document.body.removeChild(tempContainer);
+                exportBtn.textContent = originalText;
+                exportBtn.disabled = false;
+            });
         }
 
         // 初始化
