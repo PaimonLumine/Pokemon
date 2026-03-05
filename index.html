@@ -749,18 +749,29 @@
             const superEffective = new Set();
             const notEffective = new Set();
             
-            selectedTypes.forEach(type => {
-                if (!type || !typeData[type]) return;
+            // 遍历所有可能的防御类型
+            Object.keys(typeNames).forEach(defType => {
+                let maxMultiplier = 0;
+                let hasSelection = false;
                 
-                Object.entries(typeData[type]).forEach(([defType, multiplier]) => {
-                    if (multiplier === 2) superEffective.add(defType);
-                    else if (multiplier === 0.5 || multiplier === 0) notEffective.add(defType);
+                selectedTypes.forEach(type => {
+                    if (!type) return;
+                    hasSelection = true;
+                    const data = typeData[type];
+                    // 默认1倍（无特殊效果）
+                    const multiplier = (data && data[defType] !== undefined) ? data[defType] : 1;
+                    maxMultiplier = Math.max(maxMultiplier, multiplier);
                 });
-            });
-            
-            // 排除重复
-            superEffective.forEach(type => {
-                if (notEffective.has(type)) notEffective.delete(type);
+                
+                if (!hasSelection) return;
+                
+                // 取最大倍率决定分类
+                if (maxMultiplier === 2) {
+                    superEffective.add(defType);
+                } else if (maxMultiplier === 0.5 || maxMultiplier === 0) {
+                    notEffective.add(defType);
+                }
+                // 倍率为1的完全不显示
             });
             
             // 生成效果拔群行
@@ -866,7 +877,7 @@
             } else {
                 weakHtml = '<td class="types-cell">';
                 Object.entries(weaknesses).forEach(([type, mult]) => {
-                    // 只显示4倍标注
+                    // 弱点：只显示4倍
                     const multText = mult === 4 ? `<span class="multiplier">${i18n[currentLang].multiplier4}</span>` : '';
                     weakHtml += `<span class="compact-type-tag ${typeNames[type].class}">${typeNames[type][currentLang]}${multText}</span>`;
                 });
@@ -887,8 +898,9 @@
             } else {
                 resistHtml = '<td class="types-cell">';
                 Object.entries(resistances).forEach(([type, mult]) => {
-                    // 抗性不显示倍率
-                    resistHtml += `<span class="compact-type-tag ${typeNames[type].class}">${typeNames[type][currentLang]}</span>`;
+                    // 抗性：只显示4倍抵抗(1/4)
+                    const multText = mult === 0.25 ? `<span class="multiplier">${i18n[currentLang].multiplier025}</span>` : '';
+                    resistHtml += `<span class="compact-type-tag ${typeNames[type].class}">${typeNames[type][currentLang]}${multText}</span>`;
                 });
                 resistHtml += '</td>';
             }
@@ -1006,8 +1018,8 @@
                 });
                 const tags = section.querySelectorAll('.compact-type-tag');
                 tags.forEach(tag => {
-                    tag.style.padding = '0 4px';
-                    tag.style.fontSize = '12px';
+                    tag.style.padding = '0 3px';
+                    tag.style.fontSize = '11px';
                     tag.style.height = '24px';
                     tag.style.lineHeight = '24px';
                     tag.style.borderRadius = '0';
