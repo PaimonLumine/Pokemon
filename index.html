@@ -183,144 +183,119 @@
             background: #ff5252;
         }
         
-        .section {
-            margin-bottom: 25px;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        /* 紧凑表格样式 */
+        .compact-table {
+            width: auto;
+            border-collapse: collapse;
+            font-size: 13px;
         }
         
-        .section-header {
-            padding: 18px 24px;
-            font-weight: bold;
-            font-size: 22px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .section.offense .section-header {
-            background: linear-gradient(135deg, #ff6b6b, #ff8585);
-            color: white;
-        }
-        
-        .section.defense .section-header {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            color: white;
-        }
-        
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .type-display {
-            background: rgba(255,255,255,0.3);
-            padding: 6px 18px;
-            border-radius: 22px;
-            font-size: 16px;
-        }
-        
-        .section-content {
-            background: #fafafa;
-            padding: 20px;
-        }
-        
-        .category {
-            margin-bottom: 15px;
-            padding: 18px;
-            background: white;
-            border-radius: 12px;
-            display: flex;
-            align-items: flex-start;
-            gap: 18px;
-        }
-        
-        .category:last-child {
-            margin-bottom: 0;
-        }
-        
-        .category-label {
-            min-width: 120px;
-            font-weight: bold;
-            font-size: 17px;
-            padding: 10px 14px;
-            border-radius: 10px;
+        .compact-table th,
+        .compact-table td {
+            padding: 0;
             text-align: center;
+            border: 1px solid #ddd;
+            vertical-align: middle;
+            height: 24px;
         }
         
-        .super-effective .category-label {
+        .compact-table th {
+            background: #f5f5f5;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .compact-table .row-header {
+            background: #fffde7;
+            font-weight: bold;
+            font-size: 15px;
+            white-space: nowrap;
+        }
+        
+        .compact-table .row-header.offense {
+            color: #d32f2f;
+        }
+        
+        .compact-table .category-label-cell {
+            background: #fafafa;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        .compact-table .category-label-cell.super {
             background: #c8e6c9;
             color: #2e7d32;
         }
         
-        .not-effective .category-label {
+        .compact-table .category-label-cell.not-effective {
             background: #ffccbc;
             color: #d84315;
         }
         
-        .weakness .category-label {
+        .compact-table .category-label-cell.weak {
             background: #ffcdd2;
             color: #c62828;
         }
         
-        .resistance .category-label {
+        .compact-table .category-label-cell.resist {
             background: #c8e6c9;
             color: #2e7d32;
         }
         
-        .immune .category-label {
+        .compact-table .category-label-cell.immune {
             background: #e0e0e0;
             color: #616161;
         }
         
-        .category-types {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            flex: 1;
+        .compact-table .types-cell {
+            text-align: left;
+            padding: 6px;
         }
         
-        .type-tag {
-            padding: 8px 16px;
-            border-radius: 18px;
+        .compact-type-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            border-radius: 0;
             color: white;
-            font-size: 15px;
+            font-size: 12px;
             font-weight: bold;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            margin: 0;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+            height: 24px;
+            line-height: 24px;
+            vertical-align: top;
         }
         
-        .multiplier {
-            font-size: 13px;
+        .compact-type-tag .multiplier {
+            font-size: 9px;
+            margin-left: 1px;
             opacity: 0.9;
-            margin-left: 4px;
         }
         
-        .empty-msg {
+        .compact-table .empty-cell {
             color: #999;
             font-style: italic;
+            text-align: center;
         }
         
-        /* 颜色定义 */
-        .type-normal { background: #A8A878; }
-        .type-fire { background: #F08030; }
-        .type-water { background: #6890F0; }
-        .type-electric { background: #F8D030; }
-        .type-grass { background: #78C850; }
-        .type-ice { background: #98D8D8; }
-        .type-fighting { background: #C03028; }
-        .type-poison { background: #A040A0; }
-        .type-ground { background: #E0C068; }
-        .type-flying { background: #A890F0; }
-        .type-psychic { background: #F85888; }
-        .type-bug { background: #A8B820; }
-        .type-rock { background: #B8A038; }
-        .type-ghost { background: #705898; }
-        .type-dragon { background: #7038F8; }
-        .type-dark { background: #705848; }
-        .type-steel { background: #B8B8D0; }
-        .type-fairy { background: #EE99AC; }
+        .section {
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section-content {
+            background: #fafafa;
+            padding: 0;
+        }
+
+        .compact-table .types-cell {
+            text-align: left;
+            padding: 0;
+        }
         
         .ability-section {
             background: #fff8e1;
@@ -352,12 +327,12 @@
         }
         
         .ability-type {
-            padding: 6px 14px;
-            border-radius: 18px;
+            padding: 4px 12px;
+            border-radius: 16px;
             color: white;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: bold;
-            min-width: 70px;
+            min-width: 60px;
             text-align: center;
         }
         
@@ -405,6 +380,26 @@
             margin-top: 10px;
             font-size: 16px;
         }
+        
+        /* 颜色定义 */
+        .type-normal { background: #A8A878; }
+        .type-fire { background: #F08030; }
+        .type-water { background: #6890F0; }
+        .type-electric { background: #F8D030; }
+        .type-grass { background: #78C850; }
+        .type-ice { background: #98D8D8; }
+        .type-fighting { background: #C03028; }
+        .type-poison { background: #A040A0; }
+        .type-ground { background: #E0C068; }
+        .type-flying { background: #A890F0; }
+        .type-psychic { background: #F85888; }
+        .type-bug { background: #A8B820; }
+        .type-rock { background: #B8A038; }
+        .type-ghost { background: #705898; }
+        .type-dragon { background: #7038F8; }
+        .type-dark { background: #705848; }
+        .type-steel { background: #B8B8D0; }
+        .type-fairy { background: #EE99AC; }
     </style>
 </head>
 <body>
@@ -439,44 +434,22 @@
         </div>
         
         <div class="section offense">
-            <div class="section-header">
-                <div class="section-title">
-                    <span data-i18n="offense">进攻端</span>
-                    <span class="type-display" data-i18n="superEffective">(输出克制)</span>
-                </div>
-            </div>
             <div class="section-content">
-                <div class="category super-effective">
-                    <div class="category-label" data-i18n="superEffectiveLabel">效果拔群</div>
-                    <div class="category-types" id="offenseSuper"></div>
-                </div>
-                <div class="category not-effective">
-                    <div class="category-label" data-i18n="notEffectiveLabel">效果不好</div>
-                    <div class="category-types" id="offenseNot"></div>
-                </div>
+                <table class="compact-table">
+                    <tbody id="offenseTableBody">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
             </div>
         </div>
         
         <div class="section defense">
-            <div class="section-header">
-                <div class="section-title">
-                    <span data-i18n="defense">防守端</span>
-                    <span class="type-display" data-i18n="resistance">(抗性)</span>
-                </div>
-            </div>
             <div class="section-content">
-                <div class="category weakness">
-                    <div class="category-label" id="weaknessLabel">弱点 (x2)</div>
-                    <div class="category-types" id="defenseWeak"></div>
-                </div>
-                <div class="category resistance">
-                    <div class="category-label" id="resistanceLabel">抗性 (x1/2)</div>
-                    <div class="category-types" id="defenseResist"></div>
-                </div>
-                <div class="category immune">
-                    <div class="category-label" id="immuneLabel">免疫 (x0)</div>
-                    <div class="category-types" id="defenseImmune"></div>
-                </div>
+                <table class="compact-table">
+                    <tbody id="defenseTableBody">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
             </div>
         </div>
         
@@ -511,7 +484,7 @@
         };
 
         const typeNames = {
-            "Normal": { zh: "一般", en: "Normal", class: "type-normal" },
+            "Normal": { zh: "普", en: "Normal", class: "type-normal" },
             "Fire": { zh: "火", en: "Fire", class: "type-fire" },
             "Water": { zh: "水", en: "Water", class: "type-water" },
             "Electric": { zh: "电", en: "Electric", class: "type-electric" },
@@ -519,16 +492,16 @@
             "Ice": { zh: "冰", en: "Ice", class: "type-ice" },
             "Fighting": { zh: "格斗", en: "Fighting", class: "type-fighting" },
             "Poison": { zh: "毒", en: "Poison", class: "type-poison" },
-            "Ground": { zh: "地面", en: "Ground", class: "type-ground" },
-            "Flying": { zh: "飞行", en: "Flying", class: "type-flying" },
-            "Psychic": { zh: "超能", en: "Psychic", class: "type-psychic" },
+            "Ground": { zh: "地", en: "Ground", class: "type-ground" },
+            "Flying": { zh: "飞", en: "Flying", class: "type-flying" },
+            "Psychic": { zh: "超", en: "Psychic", class: "type-psychic" },
             "Bug": { zh: "虫", en: "Bug", class: "type-bug" },
-            "Rock": { zh: "岩石", en: "Rock", class: "type-rock" },
-            "Ghost": { zh: "幽灵", en: "Ghost", class: "type-ghost" },
+            "Rock": { zh: "岩", en: "Rock", class: "type-rock" },
+            "Ghost": { zh: "幽", en: "Ghost", class: "type-ghost" },
             "Dragon": { zh: "龙", en: "Dragon", class: "type-dragon" },
             "Dark": { zh: "恶", en: "Dark", class: "type-dark" },
             "Steel": { zh: "钢", en: "Steel", class: "type-steel" },
-            "Fairy": { zh: "妖精", en: "Fairy", class: "type-fairy" }
+            "Fairy": { zh: "妖", en: "Fairy", class: "type-fairy" }
         };
 
         const i18n = {
@@ -551,11 +524,11 @@
                 resistanceLabel: "抗性",
                 immuneLabel: "免疫",
                 empty: "无",
-                multiplier4: "(4倍)",
-                multiplier2: "(x2)",
-                multiplier05: "(x1/2)",
-                multiplier025: "(1/4)",
-                multiplier0: "(x0)"
+                multiplier4: "×4",
+                multiplier2: "×2",
+                multiplier05: "×1/2",
+                multiplier025: "×1/4",
+                multiplier0: "×0"
             },
             en: {
                 title: "Pokémon Type Chart",
@@ -576,11 +549,11 @@
                 resistanceLabel: "Resistance",
                 immuneLabel: "Immune",
                 empty: "None",
-                multiplier4: "(x4)",
-                multiplier2: "(x2)",
-                multiplier05: "(x1/2)",
-                multiplier025: "(x1/4)",
-                multiplier0: "(x0)"
+                multiplier4: "×4",
+                multiplier2: "×2",
+                multiplier05: "×1/2",
+                multiplier025: "×1/4",
+                multiplier0: "×0"
             }
         };
 
@@ -751,15 +724,25 @@
         }
 
         function updateOffense() {
-            const offenseSuper = document.getElementById('offenseSuper');
-            const offenseNot = document.getElementById('offenseNot');
+            const tbody = document.getElementById('offenseTableBody');
+            tbody.innerHTML = '';
             
-            offenseSuper.innerHTML = '';
-            offenseNot.innerHTML = '';
+            // 创建表头行
+            const hasSelection = selectedTypes[0] || selectedTypes[1];
             
-            if (!selectedTypes[0] && !selectedTypes[1]) {
-                offenseSuper.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
-                offenseNot.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
+            if (!hasSelection) {
+                // 空状态
+                tbody.innerHTML = `
+                    <tr>
+                        <td class="row-header offense" rowspan="2">${i18n[currentLang].offense}</td>
+                        <td class="category-label-cell super">${i18n[currentLang].superEffectiveLabel}</td>
+                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
+                    </tr>
+                    <tr>
+                        <td class="category-label-cell not-effective">${i18n[currentLang].notEffectiveLabel}</td>
+                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
+                    </tr>
+                `;
                 return;
             }
             
@@ -771,8 +754,7 @@
                 
                 Object.entries(typeData[type]).forEach(([defType, multiplier]) => {
                     if (multiplier === 2) superEffective.add(defType);
-                    else if (multiplier === 0.5) notEffective.add(defType);
-                    else if (multiplier === 0) notEffective.add(defType);
+                    else if (multiplier === 0.5 || multiplier === 0) notEffective.add(defType);
                 });
             });
             
@@ -781,36 +763,67 @@
                 if (notEffective.has(type)) notEffective.delete(type);
             });
             
+            // 生成效果拔群行
+            const superRow = document.createElement('tr');
+            let superHtml = '';
             if (superEffective.size === 0) {
-                offenseSuper.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
+                superHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
             } else {
+                superHtml = '<td class="types-cell">';
                 superEffective.forEach(type => {
-                    offenseSuper.appendChild(createTypeTag(type));
+                    superHtml += `<span class="compact-type-tag ${typeNames[type].class}">${typeNames[type][currentLang]}</span>`;
                 });
+                superHtml += '</td>';
             }
+            superRow.innerHTML = `
+                <td class="row-header offense" rowspan="2">${i18n[currentLang].offense}</td>
+                <td class="category-label-cell super">${i18n[currentLang].superEffectiveLabel}</td>
+                ${superHtml}
+            `;
+            tbody.appendChild(superRow);
             
+            // 生成效果不好行
+            const notRow = document.createElement('tr');
+            let notHtml = '';
             if (notEffective.size === 0) {
-                offenseNot.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
+                notHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
             } else {
+                notHtml = '<td class="types-cell">';
                 notEffective.forEach(type => {
-                    offenseNot.appendChild(createTypeTag(type));
+                    notHtml += `<span class="compact-type-tag ${typeNames[type].class}">${typeNames[type][currentLang]}</span>`;
                 });
+                notHtml += '</td>';
             }
+            notRow.innerHTML = `
+                <td class="category-label-cell not-effective">${i18n[currentLang].notEffectiveLabel}</td>
+                ${notHtml}
+            `;
+            tbody.appendChild(notRow);
         }
 
         function updateDefense() {
-            const defenseWeak = document.getElementById('defenseWeak');
-            const defenseResist = document.getElementById('defenseResist');
-            const defenseImmune = document.getElementById('defenseImmune');
+            const tbody = document.getElementById('defenseTableBody');
+            tbody.innerHTML = '';
             
-            defenseWeak.innerHTML = '';
-            defenseResist.innerHTML = '';
-            defenseImmune.innerHTML = '';
+            const hasSelection = selectedTypes[0] || selectedTypes[1];
             
-            if (!selectedTypes[0] && !selectedTypes[1]) {
-                defenseWeak.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
-                defenseResist.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
-                defenseImmune.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
+            if (!hasSelection) {
+                // 空状态
+                tbody.innerHTML = `
+                    <tr>
+                        <td class="row-header" rowspan="3" style="background: #e3f2fd; color: #1565c0;">${i18n[currentLang].defense}</td>
+                        <td class="category-label-cell weak">${i18n[currentLang].weaknessLabel}</td>
+                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
+                    </tr>
+                    <tr>
+                        <td class="category-label-cell resist">${i18n[currentLang].resistanceLabel}</td>
+                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
+                    </tr>
+                    <tr>
+                        <td class="category-label-cell immune">${i18n[currentLang].immuneLabel}</td>
+                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
+                    </tr>
+                `;
                 return;
             }
             
@@ -845,59 +858,63 @@
                 }
             });
             
-            // 更新标签
-            document.getElementById('weaknessLabel').textContent = 
-                `${i18n[currentLang].weaknessLabel} ${Object.keys(weaknesses).length > 0 ? `(${Object.keys(weaknesses).length})` : ''}`;
-            document.getElementById('resistanceLabel').textContent = 
-                `${i18n[currentLang].resistanceLabel} ${Object.keys(resistances).length > 0 ? `(${Object.keys(resistances).length})` : ''}`;
-            document.getElementById('immuneLabel').textContent = 
-                `${i18n[currentLang].immuneLabel} ${Object.keys(immunities).length > 0 ? `(${Object.keys(immunities).length})` : ''}`;
-            
+            // 生成弱点行
+            const weakRow = document.createElement('tr');
+            let weakHtml = '';
             if (Object.keys(weaknesses).length === 0) {
-                defenseWeak.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
+                weakHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
             } else {
+                weakHtml = '<td class="types-cell">';
                 Object.entries(weaknesses).forEach(([type, mult]) => {
-                    defenseWeak.appendChild(createTypeTagWithMultiplier(type, mult));
+                    // 只显示4倍标注
+                    const multText = mult === 4 ? `<span class="multiplier">${i18n[currentLang].multiplier4}</span>` : '';
+                    weakHtml += `<span class="compact-type-tag ${typeNames[type].class}">${typeNames[type][currentLang]}${multText}</span>`;
                 });
+                weakHtml += '</td>';
             }
+            weakRow.innerHTML = `
+                <td class="row-header" rowspan="3" style="background: #e3f2fd; color: #1565c0;">${i18n[currentLang].defense}</td>
+                <td class="category-label-cell weak">${i18n[currentLang].weaknessLabel}</td>
+                ${weakHtml}
+            `;
+            tbody.appendChild(weakRow);
             
+            // 生成抗性行
+            const resistRow = document.createElement('tr');
+            let resistHtml = '';
             if (Object.keys(resistances).length === 0) {
-                defenseResist.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
+                resistHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
             } else {
+                resistHtml = '<td class="types-cell">';
                 Object.entries(resistances).forEach(([type, mult]) => {
-                    defenseResist.appendChild(createTypeTagWithMultiplier(type, mult));
+                    // 抗性不显示倍率
+                    resistHtml += `<span class="compact-type-tag ${typeNames[type].class}">${typeNames[type][currentLang]}</span>`;
                 });
+                resistHtml += '</td>';
             }
+            resistRow.innerHTML = `
+                <td class="category-label-cell resist">${i18n[currentLang].resistanceLabel}</td>
+                ${resistHtml}
+            `;
+            tbody.appendChild(resistRow);
             
+            // 生成免疫行
+            const immuneRow = document.createElement('tr');
+            let immuneHtml = '';
             if (Object.keys(immunities).length === 0) {
-                defenseImmune.innerHTML = `<span class="empty-msg">${i18n[currentLang].empty}</span>`;
+                immuneHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
             } else {
-                Object.entries(immunities).forEach(([type, mult]) => {
-                    defenseImmune.appendChild(createTypeTagWithMultiplier(type, mult));
+                immuneHtml = '<td class="types-cell">';
+                Object.keys(immunities).forEach(type => {
+                    immuneHtml += `<span class="compact-type-tag ${typeNames[type].class}">${typeNames[type][currentLang]}</span>`;
                 });
+                immuneHtml += '</td>';
             }
-        }
-
-        function createTypeTag(type) {
-            const tag = document.createElement('span');
-            tag.className = `type-tag ${typeNames[type].class}`;
-            tag.textContent = typeNames[type][currentLang];
-            return tag;
-        }
-
-        function createTypeTagWithMultiplier(type, multiplier) {
-            const tag = document.createElement('span');
-            tag.className = `type-tag ${typeNames[type].class}`;
-            
-            let multText = '';
-            if (multiplier === 4) multText = i18n[currentLang].multiplier4;
-            else if (multiplier === 2) multText = i18n[currentLang].multiplier2;
-            else if (multiplier === 0.5) multText = i18n[currentLang].multiplier05;
-            else if (multiplier === 0.25) multText = i18n[currentLang].multiplier025;
-            else if (multiplier === 0) multText = i18n[currentLang].multiplier0;
-            
-            tag.innerHTML = `${typeNames[type][currentLang]}<span class="multiplier">${multText}</span>`;
-            return tag;
+            immuneRow.innerHTML = `
+                <td class="category-label-cell immune">${i18n[currentLang].immuneLabel}</td>
+                ${immuneHtml}
+            `;
+            tbody.appendChild(immuneRow);
         }
 
         function setLanguage(lang) {
@@ -957,7 +974,7 @@
             exportBtn.textContent = currentLang === 'zh' ? '生成中...' : 'Generating...';
             exportBtn.disabled = true;
             
-            // 获取需要导出的区域（不包括选择器和特性部分，只导出结果）
+            // 获取需要导出的区域
             const offenseSection = document.querySelector('.section.offense');
             const defenseSection = document.querySelector('.section.defense');
             
@@ -965,9 +982,10 @@
             const tempContainer = document.createElement('div');
             tempContainer.style.cssText = `
                 background: #f0f0f0;
-                padding: 12px;
+                padding: 8px;
                 border-radius: 12px;
-                width: 900px;
+                width: auto;
+                display: inline-block;
                 box-sizing: border-box;
             `;
             
@@ -975,57 +993,44 @@
             const offenseClone = offenseSection.cloneNode(true);
             const defenseClone = defenseSection.cloneNode(true);
             
-            // 更新所有标签为当前语言
-            const updateCategoryLabels = (section) => {
-                const categories = section.querySelectorAll('.category');
-                categories.forEach(cat => {
-                    const label = cat.querySelector('.category-label');
-                    if (cat.classList.contains('super-effective')) {
-                        label.textContent = i18n[currentLang].superEffectiveLabel;
-                    } else if (cat.classList.contains('not-effective')) {
-                        label.textContent = i18n[currentLang].notEffectiveLabel;
-                    } else if (cat.classList.contains('weakness')) {
-                        label.textContent = i18n[currentLang].weaknessLabel;
-                    } else if (cat.classList.contains('resistance')) {
-                        label.textContent = i18n[currentLang].resistanceLabel;
-                    } else if (cat.classList.contains('immune')) {
-                        label.textContent = i18n[currentLang].immuneLabel;
-                    }
+            // 调整表格样式以适应导出
+            const adjustTable = (section) => {
+                const table = section.querySelector('.compact-table');
+                if (table) {
+                    table.style.fontSize = '12px';
+                }
+                const cells = section.querySelectorAll('.compact-table td');
+                cells.forEach(cell => {
+                    cell.style.height = '24px';
+                    cell.style.padding = '0';
                 });
-                
-                // 更新 empty-msg 文本
-                const emptyMsgs = section.querySelectorAll('.empty-msg');
-                emptyMsgs.forEach(msg => {
-                    msg.textContent = i18n[currentLang].empty;
+                const tags = section.querySelectorAll('.compact-type-tag');
+                tags.forEach(tag => {
+                    tag.style.padding = '0 4px';
+                    tag.style.fontSize = '12px';
+                    tag.style.height = '24px';
+                    tag.style.lineHeight = '24px';
+                    tag.style.borderRadius = '0';
+                    tag.style.margin = '0';
                 });
             };
             
-            updateCategoryLabels(offenseClone);
-            updateCategoryLabels(defenseClone);
+            adjustTable(offenseClone);
+            adjustTable(defenseClone);
             
-            // 为表格行添加淡色背景（所有行都有颜色）
-            const addRowBackground = (section, color) => {
-                const categories = section.querySelectorAll('.category');
-                categories.forEach((cat) => {
-                    cat.style.background = color;
-                    cat.style.boxShadow = '0 2px 4px rgba(0,0,0,0.08)';
-                    cat.style.marginBottom = '12px';
-                });
-            };
-            
-            // 使用更深的颜色
-            addRowBackground(offenseClone, '#fff5e6');
-            addRowBackground(defenseClone, '#e6f3ff');
-            
-            // 为section添加淡色边框和背景
+            // 为section添加样式
             offenseClone.style.border = 'none';
             offenseClone.style.background = '#fff';
-            offenseClone.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
-            offenseClone.style.marginBottom = '6px';
+            offenseClone.style.boxShadow = 'none';
+            offenseClone.style.marginBottom = '8px';
+            offenseClone.style.borderRadius = '4px';
+            offenseClone.style.overflow = 'hidden';
             defenseClone.style.border = 'none';
             defenseClone.style.background = '#fff';
-            defenseClone.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+            defenseClone.style.boxShadow = 'none';
             defenseClone.style.marginBottom = '0';
+            defenseClone.style.borderRadius = '4px';
+            defenseClone.style.overflow = 'hidden';
             
             tempContainer.appendChild(offenseClone);
             tempContainer.appendChild(defenseClone);
@@ -1034,7 +1039,7 @@
             
             html2canvas(tempContainer, {
                 backgroundColor: '#e8e8e8',
-                scale: 2,
+                scale: 3,
                 useCORS: true,
                 allowTaint: true
             }).then(canvas => {
