@@ -194,7 +194,7 @@
         .compact-table td {
             padding: 0;
             text-align: center;
-            border: 1px solid #ddd;
+            border: 1px solid #000;
             vertical-align: middle;
             height: 24px;
         }
@@ -206,47 +206,45 @@
         }
         
         .compact-table .row-header {
-            background: #fffde7;
+            background: #ffeb3b;
             font-weight: bold;
             font-size: 15px;
             white-space: nowrap;
             width: 60px;
-        }
-        
-        .compact-table .row-header.offense {
             color: #d32f2f;
         }
         
         .compact-table .category-label-cell {
-            background: #fafafa;
+            background: #ffffff;
             font-weight: bold;
             white-space: nowrap;
             width: 70px;
+            color: #000000;
         }
         
         .compact-table .category-label-cell.super {
-            background: #c8e6c9;
-            color: #2e7d32;
+            background: #ffffff;
+            color: #000000;
         }
         
         .compact-table .category-label-cell.not-effective {
-            background: #ffccbc;
-            color: #d84315;
+            background: #ffffff;
+            color: #000000;
         }
         
         .compact-table .category-label-cell.weak {
-            background: #ffcdd2;
-            color: #c62828;
+            background: #ffffff;
+            color: #000000;
         }
         
         .compact-table .category-label-cell.resist {
-            background: #c8e6c9;
-            color: #2e7d32;
+            background: #ffffff;
+            color: #000000;
         }
         
         .compact-table .category-label-cell.immune {
-            background: #e0e0e0;
-            color: #616161;
+            background: #ffffff;
+            color: #000000;
         }
         
         .compact-table .types-cell {
@@ -1031,22 +1029,24 @@
                     table.style.border = 'none';
                     table.style.background = 'transparent';
                 }
-                // 移除所有单元格边框
+                // 设置黑色边框
                 const allCells = section.querySelectorAll('.compact-table td');
                 allCells.forEach(cell => {
-                    cell.style.border = 'none';
+                    cell.style.border = '1px solid #000';
                 });
-                // 只设置列宽度和右边框分割线
+                // 设置列宽度和样式
                 const rowHeaders = section.querySelectorAll('.row-header');
                 rowHeaders.forEach(header => {
                     header.style.width = '60px';
-                    header.style.borderRight = '1px solid #ddd';
+                    header.style.backgroundColor = '#ffeb3b';
+                    header.style.color = '#d32f2f';
                 });
                 const categoryCells = section.querySelectorAll('.category-label-cell');
                 categoryCells.forEach(cell => {
                     cell.style.width = '70px';
                     cell.style.padding = '0 4px';
-                    cell.style.borderRight = '1px solid #ddd';
+                    cell.style.backgroundColor = '#ffffff';
+                    cell.style.color = '#000000';
                 });
                 // 确保 type-text 样式正确
                 const typeTexts = section.querySelectorAll('.type-text');
