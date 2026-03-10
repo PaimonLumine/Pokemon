@@ -187,16 +187,18 @@
         .compact-table {
             width: auto;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 15px;
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            table-layout: fixed;
         }
         
         .compact-table th,
         .compact-table td {
             padding: 0;
             text-align: center;
-            border: 1px solid #000;
+            border: 2px solid #000;
             vertical-align: middle;
-            height: 24px;
+            height: 32px;
         }
         
         .compact-table th {
@@ -208,80 +210,82 @@
         .compact-table .row-header {
             background: #ffeb3b;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 18px;
             white-space: nowrap;
-            width: 60px;
+            width: 70px;
+            border: 3px solid #000;
+        }
+        
+        .compact-table .row-header.offense {
             color: #d32f2f;
+        }
+        
+        .compact-table .row-header.defense {
+            color: #1976d2;
         }
         
         .compact-table .category-label-cell {
             background: #ffffff;
             font-weight: bold;
             white-space: nowrap;
-            width: 70px;
+            width: 76px;
             color: #000000;
+            font-size: 16px;
+            border: 2px solid #000;
         }
         
-        .compact-table .category-label-cell.super {
-            background: #ffffff;
-            color: #000000;
-        }
-        
-        .compact-table .category-label-cell.not-effective {
-            background: #ffffff;
-            color: #000000;
-        }
-        
-        .compact-table .category-label-cell.weak {
-            background: #ffffff;
-            color: #000000;
-        }
-        
-        .compact-table .category-label-cell.resist {
-            background: #ffffff;
-            color: #000000;
-        }
-        
+        .compact-table .category-label-cell.super,
+        .compact-table .category-label-cell.not-effective,
+        .compact-table .category-label-cell.weak,
+        .compact-table .category-label-cell.resist,
         .compact-table .category-label-cell.immune {
             background: #ffffff;
             color: #000000;
         }
         
-        .compact-table .types-cell {
-            text-align: left;
-            padding: 6px;
-        }
-        
-        .compact-type-tag {
-            display: inline-block;
-            padding: 0 4px;
-            border-radius: 0;
-            color: white !important;
-            font-size: 12px;
-            font-weight: bold;
-            margin: 0;
-            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
-            height: 24px;
-            line-height: 24px;
-            vertical-align: top;
+        /* 属性单元格 - 每个属性独立单元格 */
+        .compact-table .type-cell {
+            width: 40px;
+            min-width: 40px;
+            max-width: 40px;
+            height: 36px;
+            min-height: 36px;
+            max-height: 36px;
+            padding: 0;
+            border: 2px solid #000;
             text-align: center;
-            text-decoration: none;
+            vertical-align: middle;
+            color: white !important;
+            font-size: 22px;
+            font-weight: bold;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
             box-sizing: border-box;
+            overflow: hidden;
         }
         
-        .compact-type-tag .type-text {
+        .compact-table .type-cell .type-text {
             display: inline;
+            line-height: 36px;
         }
         
-        .compact-type-tag.underline .type-text {
+        .compact-table .type-cell.underline .type-text {
             border-bottom: 2px solid white;
-            padding-bottom: 2px;
+            padding-bottom: 1px;
         }
         
         .compact-table .empty-cell {
             color: #999;
-            font-style: italic;
+            font-style: normal;
             text-align: center;
+            border: 2px solid #000;
+            width: auto;
+            min-width: 100px;
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+        }
+        
+        /* 移除右边外边框 */
+        .compact-table tr td:last-child.type-cell {
+            border-right: 2px solid #000;
         }
         
         .section {
@@ -395,7 +399,7 @@
         .type-fighting { background: #C03028; }
         .type-poison { background: #A040A0; }
         .type-ground { background: #E0C068; }
-        .type-flying { background: #A890F0; }
+        .type-flying { background: #6699FF; }
         .type-psychic { background: #F85888; }
         .type-bug { background: #A8B820; }
         .type-rock { background: #B8A038; }
@@ -731,90 +735,58 @@
             const tbody = document.getElementById('offenseTableBody');
             tbody.innerHTML = '';
             
-            // 创建表头行
             const hasSelection = selectedTypes[0] || selectedTypes[1];
             
-            if (!hasSelection) {
-                // 空状态
-                tbody.innerHTML = `
-                    <tr>
-                        <td class="row-header offense" rowspan="2">${i18n[currentLang].offense}</td>
-                        <td class="category-label-cell super">${i18n[currentLang].superEffectiveLabel}</td>
-                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
-                    </tr>
-                    <tr>
-                        <td class="category-label-cell not-effective">${i18n[currentLang].notEffectiveLabel}</td>
-                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
-                    </tr>
-                `;
-                return;
-            }
-            
+            // 计算数据
             const superEffective = new Set();
             const notEffective = new Set();
             
-            // 遍历所有可能的防御类型
-            Object.keys(typeNames).forEach(defType => {
-                let maxMultiplier = 0;
-                let hasSelection = false;
-                
-                selectedTypes.forEach(type => {
-                    if (!type) return;
-                    hasSelection = true;
-                    const data = typeData[type];
-                    // 默认1倍（无特殊效果）
-                    const multiplier = (data && data[defType] !== undefined) ? data[defType] : 1;
-                    maxMultiplier = Math.max(maxMultiplier, multiplier);
+            if (hasSelection) {
+                Object.keys(typeNames).forEach(defType => {
+                    let maxMultiplier = 0;
+                    
+                    selectedTypes.forEach(type => {
+                        if (!type) return;
+                        const data = typeData[type];
+                        const multiplier = (data && data[defType] !== undefined) ? data[defType] : 1;
+                        maxMultiplier = Math.max(maxMultiplier, multiplier);
+                    });
+                    
+                    if (maxMultiplier === 2) {
+                        superEffective.add(defType);
+                    } else if (maxMultiplier === 0.5 || maxMultiplier === 0) {
+                        notEffective.add(defType);
+                    }
                 });
-                
-                if (!hasSelection) return;
-                
-                // 取最大倍率决定分类
-                if (maxMultiplier === 2) {
-                    superEffective.add(defType);
-                } else if (maxMultiplier === 0.5 || maxMultiplier === 0) {
-                    notEffective.add(defType);
-                }
-                // 倍率为1的完全不显示
-            });
+            }
             
             // 生成效果拔群行
             const superRow = document.createElement('tr');
-            let superHtml = '';
+            let superHtml = `<td class="row-header offense" rowspan="2">${i18n[currentLang].offense}</td>`;
+            superHtml += `<td class="category-label-cell super">${i18n[currentLang].superEffectiveLabel}</td>`;
+            
             if (superEffective.size === 0) {
-                superHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
+                superHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
             } else {
-                superHtml = '<td class="types-cell">';
                 superEffective.forEach(type => {
-                    const bgColor = typeNames[type].color;
-                    superHtml += `<span class="compact-type-tag ${typeNames[type].class}" style="background-color: ${bgColor};"><span class="type-text">${typeNames[type][currentLang]}</span></span>`;
+                    superHtml += `<td class="type-cell ${typeNames[type].class}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
                 });
-                superHtml += '</td>';
             }
-            superRow.innerHTML = `
-                <td class="row-header offense" rowspan="2">${i18n[currentLang].offense}</td>
-                <td class="category-label-cell super">${i18n[currentLang].superEffectiveLabel}</td>
-                ${superHtml}
-            `;
+            superRow.innerHTML = superHtml;
             tbody.appendChild(superRow);
             
             // 生成效果不好行
             const notRow = document.createElement('tr');
-            let notHtml = '';
+            let notHtml = `<td class="category-label-cell not-effective">${i18n[currentLang].notEffectiveLabel}</td>`;
+            
             if (notEffective.size === 0) {
-                notHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
+                notHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
             } else {
-                notHtml = '<td class="types-cell">';
                 notEffective.forEach(type => {
-                    const bgColor = typeNames[type].color;
-                    notHtml += `<span class="compact-type-tag ${typeNames[type].class}" style="background-color: ${bgColor};"><span class="type-text">${typeNames[type][currentLang]}</span></span>`;
+                    notHtml += `<td class="type-cell ${typeNames[type].class}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
                 });
-                notHtml += '</td>';
             }
-            notRow.innerHTML = `
-                <td class="category-label-cell not-effective">${i18n[currentLang].notEffectiveLabel}</td>
-                ${notHtml}
-            `;
+            notRow.innerHTML = notHtml;
             tbody.appendChild(notRow);
         }
 
@@ -828,17 +800,17 @@
                 // 空状态
                 tbody.innerHTML = `
                     <tr>
-                        <td class="row-header" rowspan="3" style="background: #e3f2fd; color: #1565c0;">${i18n[currentLang].defense}</td>
+                        <td class="row-header defense" rowspan="3">${i18n[currentLang].defense}</td>
                         <td class="category-label-cell weak">${i18n[currentLang].weaknessLabel}</td>
-                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
+                        <td class="empty-cell" style="min-width: 100px;">${i18n[currentLang].empty}</td>
                     </tr>
                     <tr>
                         <td class="category-label-cell resist">${i18n[currentLang].resistanceLabel}</td>
-                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
+                        <td class="empty-cell" style="min-width: 100px;">${i18n[currentLang].empty}</td>
                     </tr>
                     <tr>
                         <td class="category-label-cell immune">${i18n[currentLang].immuneLabel}</td>
-                        <td class="types-cell empty-cell">${i18n[currentLang].empty}</td>
+                        <td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>
                     </tr>
                 `;
                 return;
@@ -878,66 +850,49 @@
             // 生成弱点行
             const weakRow = document.createElement('tr');
             const weakCount = Object.keys(weaknesses).length;
-            let weakHtml = '';
+            let weakHtml = `<td class="row-header defense" rowspan="3">${i18n[currentLang].defense}</td>`;
+            weakHtml += `<td class="category-label-cell weak">${i18n[currentLang].weaknessLabel} ${weakCount}</td>`;
+            
             if (weakCount === 0) {
-                weakHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
+                weakHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
             } else {
-                weakHtml = '<td class="types-cell">';
                 Object.entries(weaknesses).forEach(([type, mult]) => {
-                    // 4倍弱点加下划线
-                    const bgColor = typeNames[type].color;
                     const underlineClass = mult === 4 ? 'underline' : '';
-                    weakHtml += `<span class="compact-type-tag ${typeNames[type].class} ${underlineClass}" style="background-color: ${bgColor};"><span class="type-text">${typeNames[type][currentLang]}</span></span>`;
+                    weakHtml += `<td class="type-cell ${typeNames[type].class} ${underlineClass}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
                 });
-                weakHtml += '</td>';
             }
-            weakRow.innerHTML = `
-                <td class="row-header" rowspan="3" style="background: #e3f2fd; color: #1565c0;">${i18n[currentLang].defense}</td>
-                <td class="category-label-cell weak">${i18n[currentLang].weaknessLabel} ${weakCount}</td>
-                ${weakHtml}
-            `;
+            weakRow.innerHTML = weakHtml;
             tbody.appendChild(weakRow);
             
             // 生成抗性行
             const resistRow = document.createElement('tr');
             const resistCount = Object.keys(resistances).length;
-            let resistHtml = '';
+            let resistHtml = `<td class="category-label-cell resist">${i18n[currentLang].resistanceLabel} ${resistCount}</td>`;
+            
             if (resistCount === 0) {
-                resistHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
+                resistHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
             } else {
-                resistHtml = '<td class="types-cell">';
                 Object.entries(resistances).forEach(([type, mult]) => {
-                    // 4倍抵抗(1/4)加下划线
-                    const bgColor = typeNames[type].color;
                     const underlineClass = mult === 0.25 ? 'underline' : '';
-                    resistHtml += `<span class="compact-type-tag ${typeNames[type].class} ${underlineClass}" style="background-color: ${bgColor};"><span class="type-text">${typeNames[type][currentLang]}</span></span>`;
+                    resistHtml += `<td class="type-cell ${typeNames[type].class} ${underlineClass}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
                 });
-                resistHtml += '</td>';
             }
-            resistRow.innerHTML = `
-                <td class="category-label-cell resist">${i18n[currentLang].resistanceLabel} ${resistCount}</td>
-                ${resistHtml}
-            `;
+            resistRow.innerHTML = resistHtml;
             tbody.appendChild(resistRow);
             
             // 生成免疫行
             const immuneRow = document.createElement('tr');
             const immuneCount = Object.keys(immunities).length;
-            let immuneHtml = '';
+            let immuneHtml = `<td class="category-label-cell immune">${i18n[currentLang].immuneLabel} ${immuneCount}</td>`;
+            
             if (immuneCount === 0) {
-                immuneHtml = `<td class="types-cell empty-cell">${i18n[currentLang].empty}</td>`;
+                immuneHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
             } else {
-                immuneHtml = '<td class="types-cell">';
                 Object.keys(immunities).forEach(type => {
-                    const bgColor = typeNames[type].color;
-                    immuneHtml += `<span class="compact-type-tag ${typeNames[type].class}" style="background-color: ${bgColor};"><span class="type-text">${typeNames[type][currentLang]}</span></span>`;
+                    immuneHtml += `<td class="type-cell ${typeNames[type].class}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
                 });
-                immuneHtml += '</td>';
             }
-            immuneRow.innerHTML = `
-                <td class="category-label-cell immune">${i18n[currentLang].immuneLabel} ${immuneCount}</td>
-                ${immuneHtml}
-            `;
+            immuneRow.innerHTML = immuneHtml;
             tbody.appendChild(immuneRow);
         }
 
@@ -1037,29 +992,48 @@
                 // 设置列宽度和样式
                 const rowHeaders = section.querySelectorAll('.row-header');
                 rowHeaders.forEach(header => {
-                    header.style.width = '60px';
+                    header.style.width = '70px';
                     header.style.backgroundColor = '#ffeb3b';
-                    header.style.color = '#d32f2f';
+                    if (header.classList.contains('offense')) {
+                        header.style.color = '#d32f2f';
+                    } else if (header.classList.contains('defense')) {
+                        header.style.color = '#1976d2';
+                    }
                 });
                 const categoryCells = section.querySelectorAll('.category-label-cell');
                 categoryCells.forEach(cell => {
-                    cell.style.width = '70px';
+                    cell.style.width = '76px';
                     cell.style.padding = '0 4px';
                     cell.style.backgroundColor = '#ffffff';
                     cell.style.color = '#000000';
                 });
-                // 确保 type-text 样式正确
+                // 设置属性单元格样式
+                const typeCells = section.querySelectorAll('.type-cell');
+                typeCells.forEach(cell => {
+                    cell.style.width = '40px';
+                    cell.style.minWidth = '40px';
+                    cell.style.maxWidth = '40px';
+                    cell.style.height = '36px';
+                    cell.style.minHeight = '36px';
+                    cell.style.maxHeight = '36px';
+                    cell.style.padding = '0';
+                    cell.style.textAlign = 'center';
+                    cell.style.verticalAlign = 'middle';
+                    cell.style.boxSizing = 'border-box';
+                });
+                // 确保 type-text 样式正确 - 下划线只跟随文字
                 const typeTexts = section.querySelectorAll('.type-text');
                 typeTexts.forEach(text => {
                     text.style.display = 'inline';
                     text.style.color = 'white';
                     text.style.fontWeight = 'bold';
-                    text.style.fontSize = '12px';
+                    text.style.fontSize = '22px';
                     text.style.textShadow = '0 1px 1px rgba(0,0,0,0.3)';
+                    text.style.lineHeight = '36px';
                     // 如果是underline的子元素，使用border-bottom模拟下划线
                     if (text.parentElement.classList.contains('underline')) {
                         text.style.borderBottom = '2px solid white';
-                        text.style.paddingBottom = '2px';
+                        text.style.paddingBottom = '1px';
                     }
                 });
             };
