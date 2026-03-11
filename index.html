@@ -288,7 +288,7 @@
         
         /* 右边外边框 */
         .compact-table tr td:last-child.type-cell {
-            border-right: 3px solid #000;
+            border-right: 2px solid #000;
         }
         
         .section {
@@ -769,7 +769,7 @@
             superHtml += `<td class="category-label-cell super">${i18n[currentLang].superEffectiveLabel}</td>`;
             
             if (superEffective.size === 0) {
-                superHtml += ``;
+                superHtml += `<td class="type-cell" style="border: none; background: transparent;"></td>`;
             } else {
                 superEffective.forEach(type => {
                     superHtml += `<td class="type-cell ${typeNames[type].class}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
@@ -783,7 +783,7 @@
             let notHtml = `<td class="category-label-cell not-effective">${i18n[currentLang].notEffectiveLabel}</td>`;
             
             if (notEffective.size === 0) {
-                notHtml += ``;
+                notHtml += `<td class="type-cell" style="border: none; background: transparent;"></td>`;
             } else {
                 notEffective.forEach(type => {
                     notHtml += `<td class="type-cell ${typeNames[type].class}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
@@ -857,7 +857,7 @@
             weakHtml += `<td class="category-label-cell weak">${i18n[currentLang].weaknessLabel} ${weakCount}</td>`;
             
             if (weakCount === 0) {
-                weakHtml += ``;
+                weakHtml += `<td class="type-cell" style="border: none; background: transparent;"></td>`;
             } else {
                 Object.entries(weaknesses).forEach(([type, mult]) => {
                     const circleClass = mult === 4 ? 'circle' : '';
@@ -873,7 +873,7 @@
             let resistHtml = `<td class="category-label-cell resist">${i18n[currentLang].resistanceLabel} ${resistCount}</td>`;
             
             if (resistCount === 0) {
-                resistHtml += ``;
+                resistHtml += `<td class="type-cell" style="border: none; background: transparent;"></td>`;
             } else {
                 Object.entries(resistances).forEach(([type, mult]) => {
                     const circleClass = mult === 0.25 ? 'circle' : '';
@@ -889,7 +889,7 @@
             let immuneHtml = `<td class="category-label-cell immune">${i18n[currentLang].immuneLabel} ${immuneCount}</td>`;
             
             if (immuneCount === 0) {
-                immuneHtml += `<td class="type-cell" style="background-color: transparent; border: none;"></td>`;
+                immuneHtml += `<td class="type-cell" style="border: none; background: transparent;"></td>`;
             } else {
                 Object.keys(immunities).forEach(type => {
                     immuneHtml += `<td class="type-cell ${typeNames[type].class}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
@@ -984,22 +984,21 @@
                 const table = section.querySelector('.compact-table');
                 if (table) {
                     table.style.fontSize = '12px';
-                    table.style.border = 'none';
                     table.style.background = 'transparent';
+                    // 使用单边框策略，表格容器只设置上边框和左边框
+                    table.style.border = 'none';
+                    table.style.borderTop = '3px solid #000';
+                    table.style.borderLeft = '3px solid #000';
+                    table.style.borderCollapse = 'collapse';
                 }
-                // 设置黑色边框（排除已经设置为无边框的单元格）
-                const allCells = section.querySelectorAll('.compact-table td');
-                allCells.forEach(cell => {
-                    // 如果单元格已经有border: none的内联样式，则跳过
-                    if (cell.style.border !== 'none') {
-                        cell.style.border = '3px solid #000';
-                    }
-                });
-                // 设置列宽度和样式
+                // 设置列宽度和样式 - 所有单元格只设置右边框和下边框
                 const rowHeaders = section.querySelectorAll('.row-header');
                 rowHeaders.forEach(header => {
                     header.style.width = '70px';
                     header.style.backgroundColor = '#ffeb3b';
+                    header.style.border = 'none';
+                    header.style.borderRight = '3px solid #000';
+                    header.style.borderBottom = '3px solid #000';
                     if (header.classList.contains('offense')) {
                         header.style.color = '#d32f2f';
                     } else if (header.classList.contains('defense')) {
@@ -1012,20 +1011,31 @@
                     cell.style.padding = '0 4px';
                     cell.style.backgroundColor = '#ffffff';
                     cell.style.color = '#000000';
+                    cell.style.border = 'none';
+                    cell.style.borderRight = '3px solid #000';
+                    cell.style.borderBottom = '3px solid #000';
                 });
                 // 设置属性单元格样式
                 const typeCells = section.querySelectorAll('.type-cell');
                 typeCells.forEach(cell => {
-                    cell.style.width = '40px';
-                    cell.style.minWidth = '40px';
-                    cell.style.maxWidth = '40px';
-                    cell.style.height = '36px';
-                    cell.style.minHeight = '36px';
-                    cell.style.maxHeight = '36px';
-                    cell.style.padding = '0';
-                    cell.style.textAlign = 'center';
-                    cell.style.verticalAlign = 'middle';
-                    cell.style.boxSizing = 'border-box';
+                    // 跳过占位单元格（背景透明且无可见边框的）
+                    const isPlaceholder = cell.style.background === 'transparent' || 
+                                         cell.style.border === 'none';
+                    if (!isPlaceholder) {
+                        cell.style.width = '40px';
+                        cell.style.minWidth = '40px';
+                        cell.style.maxWidth = '40px';
+                        cell.style.height = '36px';
+                        cell.style.minHeight = '36px';
+                        cell.style.maxHeight = '36px';
+                        cell.style.padding = '0';
+                        cell.style.textAlign = 'center';
+                        cell.style.verticalAlign = 'middle';
+                        cell.style.boxSizing = 'border-box';
+                        cell.style.border = 'none';
+                        cell.style.borderRight = '3px solid #000';
+                        cell.style.borderBottom = '3px solid #000';
+                    }
                 });
                 // 确保 type-text 样式正确 - 下划线只跟随文字
                 const typeTexts = section.querySelectorAll('.type-text');
@@ -1076,7 +1086,7 @@
             
             html2canvas(tempContainer, {
                 backgroundColor: null,
-                scale: 3,
+                scale: 4,
                 useCORS: true,
                 allowTaint: true
             }).then(canvas => {
