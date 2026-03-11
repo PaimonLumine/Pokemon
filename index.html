@@ -196,9 +196,9 @@
         .compact-table td {
             padding: 0;
             text-align: center;
-            border: 2px solid #000;
+            border: 3px solid #000;
             vertical-align: middle;
-            height: 32px;
+            height: 24px;
         }
         
         .compact-table th {
@@ -208,7 +208,7 @@
         }
         
         .compact-table .row-header {
-            background: #ffeb3b;
+            background: #fffa5c;
             font-weight: bold;
             font-size: 18px;
             white-space: nowrap;
@@ -217,11 +217,11 @@
         }
         
         .compact-table .row-header.offense {
-            color: #d32f2f;
+            color: #ff0000;
         }
         
         .compact-table .row-header.defense {
-            color: #1976d2;
+            color: #0d7ce9;
         }
         
         .compact-table .category-label-cell {
@@ -231,7 +231,7 @@
             width: 76px;
             color: #000000;
             font-size: 16px;
-            border: 2px solid #000;
+            border: 3px solid #000;
         }
         
         .compact-table .category-label-cell.super,
@@ -252,7 +252,7 @@
             min-height: 36px;
             max-height: 36px;
             padding: 0;
-            border: 2px solid #000;
+            border: 3px solid #000;
             text-align: center;
             vertical-align: middle;
             color: white !important;
@@ -268,24 +268,27 @@
             line-height: 36px;
         }
         
-        .compact-table .type-cell.underline .type-text {
-            border-bottom: 2px solid white;
-            padding-bottom: 1px;
+        .compact-table .type-cell.circle .type-text {
+            border: 2px solid white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            display: inline-block;
+            line-height: 1;
         }
         
         .compact-table .empty-cell {
             color: #999;
             font-style: normal;
             text-align: center;
-            border: 2px solid #000;
+            border: 3px solid #000;
             width: auto;
             min-width: 100px;
             font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
         }
         
-        /* 移除右边外边框 */
+        /* 右边外边框 */
         .compact-table tr td:last-child.type-cell {
-            border-right: 2px solid #000;
+            border-right: 3px solid #000;
         }
         
         .section {
@@ -493,15 +496,15 @@
 
         const typeNames = {
             "Normal": { zh: "普", en: "Normal", class: "type-normal", color: "#A8A878" },
-            "Fire": { zh: "火", en: "Fire", class: "type-fire", color: "#F08030" },
-            "Water": { zh: "水", en: "Water", class: "type-water", color: "#6890F0" },
+            "Fire": { zh: "火", en: "Fire", class: "type-fire", color: "#ff4422" },
+            "Water": { zh: "水", en: "Water", class: "type-water", color: "#3498ff" },
             "Electric": { zh: "电", en: "Electric", class: "type-electric", color: "#F8D030" },
             "Grass": { zh: "草", en: "Grass", class: "type-grass", color: "#78C850" },
             "Ice": { zh: "冰", en: "Ice", class: "type-ice", color: "#98D8D8" },
-            "Fighting": { zh: "斗", en: "Fighting", class: "type-fighting", color: "#C03028" },
+            "Fighting": { zh: "斗", en: "Fighting", class: "type-fighting", color: "#bb5543" },
             "Poison": { zh: "毒", en: "Poison", class: "type-poison", color: "#A040A0" },
             "Ground": { zh: "地", en: "Ground", class: "type-ground", color: "#E0C068" },
-            "Flying": { zh: "飞", en: "Flying", class: "type-flying", color: "#A890F0" },
+            "Flying": { zh: "飞", en: "Flying", class: "type-flying", color: "#6698ff" },
             "Psychic": { zh: "超", en: "Psychic", class: "type-psychic", color: "#F85888" },
             "Bug": { zh: "虫", en: "Bug", class: "type-bug", color: "#A8B820" },
             "Rock": { zh: "岩", en: "Rock", class: "type-rock", color: "#B8A038" },
@@ -509,7 +512,7 @@
             "Dragon": { zh: "龙", en: "Dragon", class: "type-dragon", color: "#7038F8" },
             "Dark": { zh: "恶", en: "Dark", class: "type-dark", color: "#705848" },
             "Steel": { zh: "钢", en: "Steel", class: "type-steel", color: "#B8B8D0" },
-            "Fairy": { zh: "妖", en: "Fairy", class: "type-fairy", color: "#EE99AC" }
+            "Fairy": { zh: "妖", en: "Fairy", class: "type-fairy", color: "#feaafe" }
         };
 
         const i18n = {
@@ -766,7 +769,7 @@
             superHtml += `<td class="category-label-cell super">${i18n[currentLang].superEffectiveLabel}</td>`;
             
             if (superEffective.size === 0) {
-                superHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
+                superHtml += ``;
             } else {
                 superEffective.forEach(type => {
                     superHtml += `<td class="type-cell ${typeNames[type].class}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
@@ -780,7 +783,7 @@
             let notHtml = `<td class="category-label-cell not-effective">${i18n[currentLang].notEffectiveLabel}</td>`;
             
             if (notEffective.size === 0) {
-                notHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
+                notHtml += ``;
             } else {
                 notEffective.forEach(type => {
                     notHtml += `<td class="type-cell ${typeNames[type].class}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
@@ -802,15 +805,15 @@
                     <tr>
                         <td class="row-header defense" rowspan="3">${i18n[currentLang].defense}</td>
                         <td class="category-label-cell weak">${i18n[currentLang].weaknessLabel}</td>
-                        <td class="empty-cell" style="min-width: 100px;">${i18n[currentLang].empty}</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td class="category-label-cell resist">${i18n[currentLang].resistanceLabel}</td>
-                        <td class="empty-cell" style="min-width: 100px;">${i18n[currentLang].empty}</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td class="category-label-cell immune">${i18n[currentLang].immuneLabel}</td>
-                        <td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>
+                        <td></td>
                     </tr>
                 `;
                 return;
@@ -854,11 +857,11 @@
             weakHtml += `<td class="category-label-cell weak">${i18n[currentLang].weaknessLabel} ${weakCount}</td>`;
             
             if (weakCount === 0) {
-                weakHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
+                weakHtml += ``;
             } else {
                 Object.entries(weaknesses).forEach(([type, mult]) => {
-                    const underlineClass = mult === 4 ? 'underline' : '';
-                    weakHtml += `<td class="type-cell ${typeNames[type].class} ${underlineClass}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
+                    const circleClass = mult === 4 ? 'circle' : '';
+                    weakHtml += `<td class="type-cell ${typeNames[type].class} ${circleClass}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
                 });
             }
             weakRow.innerHTML = weakHtml;
@@ -870,11 +873,11 @@
             let resistHtml = `<td class="category-label-cell resist">${i18n[currentLang].resistanceLabel} ${resistCount}</td>`;
             
             if (resistCount === 0) {
-                resistHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
+                resistHtml += ``;
             } else {
                 Object.entries(resistances).forEach(([type, mult]) => {
-                    const underlineClass = mult === 0.25 ? 'underline' : '';
-                    resistHtml += `<td class="type-cell ${typeNames[type].class} ${underlineClass}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
+                    const circleClass = mult === 0.25 ? 'circle' : '';
+                    resistHtml += `<td class="type-cell ${typeNames[type].class} ${circleClass}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
                 });
             }
             resistRow.innerHTML = resistHtml;
@@ -886,7 +889,7 @@
             let immuneHtml = `<td class="category-label-cell immune">${i18n[currentLang].immuneLabel} ${immuneCount}</td>`;
             
             if (immuneCount === 0) {
-                immuneHtml += `<td class="type-cell" style="background-color: transparent; color: #999 !important;"><span class="type-text" style="color: #999 !important;">${i18n[currentLang].empty}</span></td>`;
+                immuneHtml += `<td class="type-cell" style="background-color: transparent; border: none;"></td>`;
             } else {
                 Object.keys(immunities).forEach(type => {
                     immuneHtml += `<td class="type-cell ${typeNames[type].class}"><span class="type-text">${typeNames[type][currentLang]}</span></td>`;
@@ -984,10 +987,13 @@
                     table.style.border = 'none';
                     table.style.background = 'transparent';
                 }
-                // 设置黑色边框
+                // 设置黑色边框（排除已经设置为无边框的单元格）
                 const allCells = section.querySelectorAll('.compact-table td');
                 allCells.forEach(cell => {
-                    cell.style.border = '1px solid #000';
+                    // 如果单元格已经有border: none的内联样式，则跳过
+                    if (cell.style.border !== 'none') {
+                        cell.style.border = '3px solid #000';
+                    }
                 });
                 // 设置列宽度和样式
                 const rowHeaders = section.querySelectorAll('.row-header');
@@ -1034,6 +1040,14 @@
                     if (text.parentElement.classList.contains('underline')) {
                         text.style.borderBottom = '2px solid white';
                         text.style.paddingBottom = '1px';
+                    }
+                    // 如果是circle的子元素，添加圆圈样式
+                    if (text.parentElement.classList.contains('circle')) {
+                        text.style.border = '2px solid white';
+                        text.style.borderRadius = '50%';
+                        text.style.padding = '2px 5px';
+                        text.style.display = 'inline-block';
+                        text.style.lineHeight = '1';
                     }
                 });
             };
