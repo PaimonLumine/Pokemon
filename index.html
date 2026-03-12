@@ -196,7 +196,7 @@
         .compact-table td {
             padding: 0;
             text-align: center;
-            border: 3px solid #000;
+            border: 1px solid #000;
             vertical-align: middle;
             height: 24px;
         }
@@ -213,7 +213,7 @@
             font-size: 18px;
             white-space: nowrap;
             width: 70px;
-            border: 3px solid #000;
+            border: 1px solid #000;
         }
         
         .compact-table .row-header.offense {
@@ -231,7 +231,7 @@
             width: 76px;
             color: #000000;
             font-size: 16px;
-            border: 3px solid #000;
+            border: 1px solid #000;
         }
         
         .compact-table .category-label-cell.super,
@@ -252,7 +252,7 @@
             min-height: 36px;
             max-height: 36px;
             padding: 0;
-            border: 3px solid #000;
+            border: 1px solid #000;
             text-align: center;
             vertical-align: middle;
             color: white !important;
@@ -264,8 +264,11 @@
         }
         
         .compact-table .type-cell .type-text {
-            display: inline;
-            line-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
         }
         
         .compact-table .type-cell.circle .type-text {
@@ -280,7 +283,7 @@
             color: #999;
             font-style: normal;
             text-align: center;
-            border: 3px solid #000;
+            border: 1px solid #000;
             width: auto;
             min-width: 100px;
             font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
@@ -288,7 +291,7 @@
         
         /* 右边外边框 */
         .compact-table tr td:last-child.type-cell {
-            border-right: 2px solid #000;
+            border-right: 1px solid #000;
         }
         
         .section {
@@ -974,7 +977,7 @@
             const offenseClone = offenseSection.cloneNode(true);
             const defenseClone = defenseSection.cloneNode(true);
             
-            // 调整表格样式以适应导出 - 简化版，因为HTML已内联样式
+            // 调整表格样式以适应导出 - 单边框策略（不用collapse）
             const adjustTable = (section) => {
                 // 移除section-content背景
                 const content = section.querySelector('.section-content');
@@ -985,20 +988,67 @@
                 if (table) {
                     table.style.fontSize = '12px';
                     table.style.background = 'transparent';
-                    // 使用单边框策略，表格容器只设置上边框和左边框
+                    // 表格容器不设置边框
                     table.style.border = 'none';
-                    table.style.borderTop = '3px solid #000';
-                    table.style.borderLeft = '3px solid #000';
-                    table.style.borderCollapse = 'collapse';
                 }
-                // 设置列宽度和样式 - 所有单元格只设置右边框和下边框
+                // 首先收集所有单元格的位置信息
+                const rows = section.querySelectorAll('.compact-table tr');
+                const rowCount = rows.length;
+                const cellMap = new Map(); // 用于跟踪被rowspan占据的位置
+                const rowCellCounts = []; // 记录每行的单元格数量
+                let maxColCount = 0; // 最大列数
+                
+                rows.forEach((row, rowIndex) => {
+                    const cells = row.querySelectorAll('td');
+                    let actualColIndex = 0;
+                    let cellCount = 0;
+                    
+                    cells.forEach((cell) => {
+                        // 跳过被rowspan占据的位置
+                        while (cellMap.has(`${rowIndex}-${actualColIndex}`)) {
+                            actualColIndex++;
+                        }
+                        
+                        // 存储当前单元格信息
+                        const rowspan = parseInt(cell.getAttribute('rowspan')) || 1;
+                        const colspan = parseInt(cell.getAttribute('colspan')) || 1;
+                        
+                        // 标记被rowspan占据的位置
+                        for (let r = 0; r < rowspan; r++) {
+                            for (let c = 0; c < colspan; c++) {
+                                cellMap.set(`${rowIndex + r}-${actualColIndex + c}`, true);
+                            }
+                        }
+                        
+                        // 存储单元格位置信息用于后续处理
+                        cell.dataset.rowIndex = rowIndex;
+                        cell.dataset.colIndex = actualColIndex;
+                        cell.dataset.rowspan = rowspan;
+                        cell.dataset.colspan = colspan;
+                        
+                        actualColIndex += colspan;
+                        cellCount += colspan;
+                    });
+                    
+                    rowCellCounts.push(cellCount);
+                    maxColCount = Math.max(maxColCount, cellCount);
+                });
+                
+                // 简化边框设置 - 和预览保持一致，使用完整边框
+                const allCells = section.querySelectorAll('td');
+                allCells.forEach(cell => {
+                    // 占位单元格保持无边框
+                    if (cell.style.border === 'none') {
+                        return;
+                    }
+                    // 其他单元格统一设置完整边框（和CSS一致）
+                    cell.style.border = '1px solid #000';
+                });
+                // 设置列宽度
                 const rowHeaders = section.querySelectorAll('.row-header');
                 rowHeaders.forEach(header => {
                     header.style.width = '70px';
                     header.style.backgroundColor = '#ffeb3b';
-                    header.style.border = 'none';
-                    header.style.borderRight = '3px solid #000';
-                    header.style.borderBottom = '3px solid #000';
                     if (header.classList.contains('offense')) {
                         header.style.color = '#d32f2f';
                     } else if (header.classList.contains('defense')) {
@@ -1011,52 +1061,38 @@
                     cell.style.padding = '0 4px';
                     cell.style.backgroundColor = '#ffffff';
                     cell.style.color = '#000000';
-                    cell.style.border = 'none';
-                    cell.style.borderRight = '3px solid #000';
-                    cell.style.borderBottom = '3px solid #000';
                 });
                 // 设置属性单元格样式
                 const typeCells = section.querySelectorAll('.type-cell');
                 typeCells.forEach(cell => {
-                    // 跳过占位单元格（背景透明且无可见边框的）
-                    const isPlaceholder = cell.style.background === 'transparent' || 
-                                         cell.style.border === 'none';
-                    if (!isPlaceholder) {
-                        cell.style.width = '40px';
-                        cell.style.minWidth = '40px';
-                        cell.style.maxWidth = '40px';
-                        cell.style.height = '36px';
-                        cell.style.minHeight = '36px';
-                        cell.style.maxHeight = '36px';
-                        cell.style.padding = '0';
-                        cell.style.textAlign = 'center';
-                        cell.style.verticalAlign = 'middle';
-                        cell.style.boxSizing = 'border-box';
-                        cell.style.border = 'none';
-                        cell.style.borderRight = '3px solid #000';
-                        cell.style.borderBottom = '3px solid #000';
-                    }
+                    if (cell.style.border === 'none' && cell.style.backgroundColor === 'transparent') return;
+                    cell.style.width = '40px';
+                    cell.style.minWidth = '40px';
+                    cell.style.maxWidth = '40px';
+                    cell.style.height = '36px';
+                    cell.style.minHeight = '36px';
+                    cell.style.maxHeight = '36px';
+                    cell.style.padding = '0';
+                    cell.style.boxSizing = 'border-box';
                 });
-                // 确保 type-text 样式正确 - 下划线只跟随文字
+                // 确保 type-text 样式正确 - 居中显示
                 const typeTexts = section.querySelectorAll('.type-text');
                 typeTexts.forEach(text => {
-                    text.style.display = 'inline';
+                    text.style.display = 'inline-flex';
+                    text.style.alignItems = 'center';
+                    text.style.justifyContent = 'center';
+                    text.style.height = '100%';
+                    text.style.width = '100%';
                     text.style.color = 'white';
                     text.style.fontWeight = 'bold';
                     text.style.fontSize = '22px';
                     text.style.textShadow = '0 1px 1px rgba(0,0,0,0.3)';
-                    text.style.lineHeight = '36px';
-                    // 如果是underline的子元素，使用border-bottom模拟下划线
-                    if (text.parentElement.classList.contains('underline')) {
-                        text.style.borderBottom = '2px solid white';
-                        text.style.paddingBottom = '1px';
-                    }
                     // 如果是circle的子元素，添加圆圈样式
                     if (text.parentElement.classList.contains('circle')) {
                         text.style.border = '2px solid white';
                         text.style.borderRadius = '50%';
                         text.style.padding = '2px 5px';
-                        text.style.display = 'inline-block';
+                        text.style.display = 'inline-flex';
                         text.style.lineHeight = '1';
                     }
                 });
