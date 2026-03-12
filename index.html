@@ -279,6 +279,68 @@
             line-height: 1;
         }
         
+        /* 复合属性单元格样式 - 双色背景 */
+        .compact-table .dual-type-cell {
+            width: 70px;
+            min-width: 70px;
+            max-width: 70px;
+            height: 36px;
+            min-height: 36px;
+            max-height: 36px;
+            padding: 0;
+            border: 1px solid #000;
+            text-align: center;
+            vertical-align: middle;
+            color: white !important;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .compact-table .dual-type-cell .type-text {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 复合属性双色背景 */
+        .dual-type-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .dual-type-bg .bg-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+        }
+        
+        .dual-type-bg .bg-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+        }
+        
+        /* 盲点表格行标题 - 紫色文字 */
+        .compact-table .row-header.blindspot {
+            color: #9b59b6;
+        }
+        
         .compact-table .empty-cell {
             color: #999;
             font-style: normal;
@@ -467,9 +529,25 @@
             </div>
         </div>
         
+        <div class="section blindspot">
+            <div class="section-content">
+                <table class="compact-table">
+                    <tbody id="blindspotTableBody">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="export-section" style="margin-top: 20px;">
+            <button class="export-btn blindspot-export" onclick="exportBlindspotToImage()" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); margin-bottom: 15px;">
+                📷 导出复合属性盲点表
+            </button>
+        </div>
+        
         <div class="export-section" style="margin-top: 30px;">
             <button class="export-btn" onclick="exportToImage()" data-i18n="exportImage">
-                📷 导出为图片
+                📷 导出攻防表
             </button>
         </div>
     </div>
@@ -794,6 +872,136 @@
             }
             notRow.innerHTML = notHtml;
             tbody.appendChild(notRow);
+            
+            // 更新复合属性盲点表格
+            updateBlindspot();
+        }
+
+        function updateBlindspot() {
+            const tbody = document.getElementById('blindspotTableBody');
+            tbody.innerHTML = '';
+            
+            const hasSelection = selectedTypes[0] || selectedTypes[1];
+            
+            if (!hasSelection) {
+                // 空状态
+                tbody.innerHTML = `
+                    <tr>
+                        <td class="row-header blindspot" rowspan="1">盲点</td>
+                        <td class="category-label-cell">0</td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            const blindspots = [];
+            
+            // 遍历所有可能的双属性组合
+            const types = Object.keys(typeNames);
+            for (let i = 0; i < types.length; i++) {
+                for (let j = i + 1; j < types.length; j++) {
+                    const type1 = types[i];
+                    const type2 = types[j];
+                    
+                    // 检查当前选择的攻击属性对这个双属性组合的伤害
+                    let isBlindspot = true;
+                    
+                    selectedTypes.forEach(attackType => {
+                        if (!attackType) return;
+                        const data = typeData[attackType];
+                        if (data) {
+                            const mult1 = data[type1] !== undefined ? data[type1] : 1;
+                            const mult2 = data[type2] !== undefined ? data[type2] : 1;
+                            const totalMult = mult1 * mult2;
+                            
+                            // 如果伤害 > 0.5，则不是盲点
+                            if (totalMult > 0.5) {
+                                isBlindspot = false;
+                            }
+                        }
+                    });
+                    
+                    if (isBlindspot && (selectedTypes[0] || selectedTypes[1])) {
+                        blindspots.push({ type1, type2 });
+                    }
+                }
+            }
+            
+            // 生成盲点表格（支持多行）
+            const count = blindspots.length;
+            const itemsPerRow = 10; // 每行显示10个
+            
+            if (count === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="row-header blindspot" rowspan="1">盲点</td>
+                    <td class="category-label-cell">${count}</td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                `;
+                tbody.appendChild(row);
+            } else {
+                const totalRows = Math.ceil(count / itemsPerRow);
+                
+                for (let rowIndex = 0; rowIndex < totalRows; rowIndex++) {
+                    const row = document.createElement('tr');
+                    let html = '';
+                    
+                    // 第一行：显示标题和计数
+                    if (rowIndex === 0) {
+                        html += `<td class="row-header blindspot" rowspan="${totalRows}">盲点</td>`;
+                        html += `<td class="category-label-cell" rowspan="${totalRows}">${count}</td>`;
+                    }
+                    
+                    // 显示当前行的盲点
+                    const startIdx = rowIndex * itemsPerRow;
+                    const endIdx = Math.min(startIdx + itemsPerRow, count);
+                    
+                    for (let i = startIdx; i < endIdx; i++) {
+                        const { type1, type2 } = blindspots[i];
+                        const color1 = typeNames[type1].class;
+                        const color2 = typeNames[type2].class;
+                        html += `
+                            <td class="dual-type-cell">
+                                <div class="dual-type-bg">
+                                    <div class="bg-left ${color1}"></div>
+                                    <div class="bg-right ${color2}"></div>
+                                </div>
+                                <span class="type-text">${typeNames[type1][currentLang]}+${typeNames[type2][currentLang]}</span>
+                            </td>
+                        `;
+                    }
+                    
+                    // 如果最后一行不满，添加占位单元格保持对齐
+                    const itemsInThisRow = endIdx - startIdx;
+                    if (itemsInThisRow < itemsPerRow && rowIndex === totalRows - 1) {
+                        for (let i = 0; i < (itemsPerRow - itemsInThisRow); i++) {
+                            html += `<td class="type-cell" style="border: none; background: transparent;"></td>`;
+                        }
+                    }
+                    
+                    row.innerHTML = html;
+                    tbody.appendChild(row);
+                }
+            }
         }
 
         function updateDefense() {
@@ -959,7 +1167,7 @@
             exportBtn.textContent = currentLang === 'zh' ? '生成中...' : 'Generating...';
             exportBtn.disabled = true;
             
-            // 获取需要导出的区域
+            // 获取需要导出的区域（只导出攻防表）
             const offenseSection = document.querySelector('.section.offense');
             const defenseSection = document.querySelector('.section.defense');
             
@@ -973,7 +1181,7 @@
                 box-sizing: border-box;
             `;
             
-            // 克隆内容
+            // 克隆内容（只克隆攻防表）
             const offenseClone = offenseSection.cloneNode(true);
             const defenseClone = defenseSection.cloneNode(true);
             
@@ -1075,6 +1283,21 @@
                     cell.style.padding = '0';
                     cell.style.boxSizing = 'border-box';
                 });
+                
+                // 设置复合属性单元格样式
+                const dualTypeCells = section.querySelectorAll('.dual-type-cell');
+                dualTypeCells.forEach(cell => {
+                    cell.style.width = '70px';
+                    cell.style.minWidth = '70px';
+                    cell.style.maxWidth = '70px';
+                    cell.style.height = '36px';
+                    cell.style.minHeight = '36px';
+                    cell.style.maxHeight = '36px';
+                    cell.style.padding = '0';
+                    cell.style.boxSizing = 'border-box';
+                    cell.style.position = 'relative';
+                    cell.style.overflow = 'hidden';
+                });
                 // 确保 type-text 样式正确 - 居中显示
                 const typeTexts = section.querySelectorAll('.type-text');
                 typeTexts.forEach(text => {
@@ -1133,6 +1356,124 @@
                 link.click();
                 
                 // 清理
+                document.body.removeChild(tempContainer);
+                exportBtn.textContent = originalText;
+                exportBtn.disabled = false;
+            }).catch(err => {
+                console.error('Export failed:', err);
+                alert(currentLang === 'zh' ? '导出失败，请重试' : 'Export failed, please try again');
+                document.body.removeChild(tempContainer);
+                exportBtn.textContent = originalText;
+                exportBtn.disabled = false;
+            });
+        }
+
+        // 导出盲点表格功能
+        function exportBlindspotToImage() {
+            const exportBtn = document.querySelector('.blindspot-export');
+            const originalText = exportBtn.textContent;
+            exportBtn.textContent = '生成中...';
+            exportBtn.disabled = true;
+            
+            // 获取盲点表格区域
+            const blindspotSection = document.querySelector('.section.blindspot');
+            
+            // 创建临时容器
+            const tempContainer = document.createElement('div');
+            tempContainer.style.cssText = `
+                background: transparent;
+                padding: 0;
+                width: auto;
+                display: inline-block;
+                box-sizing: border-box;
+            `;
+            
+            // 克隆盲点内容
+            const blindspotClone = blindspotSection.cloneNode(true);
+            
+            // 调整表格样式
+            const adjustTable = (section) => {
+                const content = section.querySelector('.section-content');
+                if (content) {
+                    content.style.background = 'transparent';
+                }
+                const table = section.querySelector('.compact-table');
+                if (table) {
+                    table.style.fontSize = '12px';
+                    table.style.background = 'transparent';
+                    table.style.border = 'none';
+                    table.style.borderSpacing = '0';
+                }
+                const allCells = section.querySelectorAll('td');
+                allCells.forEach(cell => {
+                    if (cell.style.border === 'none' && cell.style.backgroundColor === 'transparent') return;
+                    cell.style.border = '1px solid #000';
+                });
+                const rowHeaders = section.querySelectorAll('.row-header');
+                rowHeaders.forEach(header => {
+                    header.style.width = '70px';
+                    header.style.backgroundColor = '#ffeb3b';
+                    if (header.classList.contains('blindspot')) {
+                        header.style.color = '#9b59b6';
+                    }
+                });
+                const categoryCells = section.querySelectorAll('.category-label-cell');
+                categoryCells.forEach(cell => {
+                    cell.style.width = '76px';
+                    cell.style.padding = '0 4px';
+                    cell.style.backgroundColor = '#ffffff';
+                    cell.style.color = '#000000';
+                });
+                const dualTypeCells = section.querySelectorAll('.dual-type-cell');
+                dualTypeCells.forEach(cell => {
+                    cell.style.width = '70px';
+                    cell.style.minWidth = '70px';
+                    cell.style.maxWidth = '70px';
+                    cell.style.height = '36px';
+                    cell.style.minHeight = '36px';
+                    cell.style.maxHeight = '36px';
+                    cell.style.padding = '0';
+                    cell.style.boxSizing = 'border-box';
+                    cell.style.background = 'transparent';
+                    cell.style.color = '#000';
+                });
+                const typeTexts = section.querySelectorAll('.type-text');
+                typeTexts.forEach(text => {
+                    text.style.display = 'inline-flex';
+                    text.style.alignItems = 'center';
+                    text.style.justifyContent = 'center';
+                    text.style.height = '100%';
+                    text.style.width = '100%';
+                    text.style.color = '#000';
+                    text.style.fontWeight = 'bold';
+                    text.style.fontSize = '14px';
+                });
+            };
+            
+            adjustTable(blindspotClone);
+            
+            blindspotClone.style.border = 'none';
+            blindspotClone.style.background = 'transparent';
+            blindspotClone.style.boxShadow = 'none';
+            blindspotClone.style.marginBottom = '0';
+            blindspotClone.style.borderRadius = '0';
+            blindspotClone.style.overflow = 'visible';
+            
+            tempContainer.appendChild(blindspotClone);
+            
+            document.body.appendChild(tempContainer);
+            
+            html2canvas(tempContainer, {
+                backgroundColor: null,
+                scale: 4,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `pokemon-blindspot-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
                 document.body.removeChild(tempContainer);
                 exportBtn.textContent = originalText;
                 exportBtn.disabled = false;
