@@ -1067,19 +1067,26 @@
                     // 检查当前选择的防御属性对这个双属性组合的抗性
                     let isResistant = true;
                     
+                    // type1/type2是候选复合属性（进攻方），selectedTypes是防御属性
+                    // 检查type1和type2攻击防御属性的倍率
+                    let type1TotalMult = 1;
+                    let type2TotalMult = 1;
+                    
                     selectedTypes.forEach(defType => {
                         if (!defType) return;
-                        const data = typeData[type1];
-                        const mult1 = (data && data[defType] !== undefined) ? data[defType] : 1;
+                        // 计算type1打defType的倍率，相乘得到对复合属性的总倍率
+                        const mult1 = (typeData[type1] && typeData[type1][defType] !== undefined) ? typeData[type1][defType] : 1;
+                        type1TotalMult *= mult1;
                         
-                        const data2 = typeData[type2];
-                        const mult2 = (data2 && data2[defType] !== undefined) ? data2[defType] : 1;
-                        
-                        // 如果任何一个倍率 > 0.5，则不是抗性
-                        if (mult1 > 0.5 || mult2 > 0.5) {
-                            isResistant = false;
-                        }
+                        // 计算type2打defType的倍率
+                        const mult2 = (typeData[type2] && typeData[type2][defType] !== undefined) ? typeData[type2][defType] : 1;
+                        type2TotalMult *= mult2;
                     });
+                    
+                    // 如果type1或type2的攻击倍率 > 0.5，则不是抗性
+                    if (type1TotalMult > 0.5 || type2TotalMult > 0.5) {
+                        isResistant = false;
+                    }
                     
                     if (isResistant && (selectedTypes[0] || selectedTypes[1])) {
                         resistances.push({ type1, type2 });
