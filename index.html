@@ -341,6 +341,11 @@
             color: #9b59b6;
         }
         
+        /* 抗性表格行标题 - 蓝色文字 */
+        .compact-table .row-header.resistance-table {
+            color: #2980b9;
+        }
+        
         .compact-table .empty-cell {
             color: #999;
             font-style: normal;
@@ -542,6 +547,22 @@
         <div class="export-section" style="margin-top: 20px;">
             <button class="export-btn blindspot-export" onclick="exportBlindspotToImage()" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); margin-bottom: 15px;">
                 📷 导出复合属性盲点表
+            </button>
+        </div>
+        
+        <div class="section resistance">
+            <div class="section-content">
+                <table class="compact-table">
+                    <tbody id="resistanceTableBody">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="export-section" style="margin-top: 20px;">
+            <button class="export-btn resistance-export" onclick="exportResistanceToImage()" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); margin-bottom: 15px;">
+                📷 导出复合属性抗性表
             </button>
         </div>
         
@@ -875,6 +896,9 @@
             
             // 更新复合属性盲点表格
             updateBlindspot();
+            
+            // 更新复合属性抗性表格
+            updateResistance();
         }
 
         function updateBlindspot() {
@@ -887,7 +911,7 @@
                 // 空状态
                 tbody.innerHTML = `
                     <tr>
-                        <td class="row-header blindspot" rowspan="1">盲点</td>
+                        <td class="row-header blindspot" rowspan="1">复合属性盲点</td>
                         <td class="category-label-cell">0</td>
                         <td class="type-cell" style="border: none; background: transparent;"></td>
                         <td class="type-cell" style="border: none; background: transparent;"></td>
@@ -944,7 +968,7 @@
             if (count === 0) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="row-header blindspot" rowspan="1">盲点</td>
+                    <td class="row-header blindspot" rowspan="1">复合属性盲点</td>
                     <td class="category-label-cell">${count}</td>
                     <td class="type-cell" style="border: none; background: transparent;"></td>
                     <td class="type-cell" style="border: none; background: transparent;"></td>
@@ -967,7 +991,7 @@
                     
                     // 第一行：显示标题和计数
                     if (rowIndex === 0) {
-                        html += `<td class="row-header blindspot" rowspan="${totalRows}">盲点</td>`;
+                        html += `<td class="row-header blindspot" rowspan="${totalRows}">复合属性盲点</td>`;
                         html += `<td class="category-label-cell" rowspan="${totalRows}">${count}</td>`;
                     }
                     
@@ -977,6 +1001,132 @@
                     
                     for (let i = startIdx; i < endIdx; i++) {
                         const { type1, type2 } = blindspots[i];
+                        const color1 = typeNames[type1].class;
+                        const color2 = typeNames[type2].class;
+                        html += `
+                            <td class="dual-type-cell">
+                                <div class="dual-type-bg">
+                                    <div class="bg-left ${color1}"></div>
+                                    <div class="bg-right ${color2}"></div>
+                                </div>
+                                <span class="type-text">${typeNames[type1][currentLang]}+${typeNames[type2][currentLang]}</span>
+                            </td>
+                        `;
+                    }
+                    
+                    // 如果最后一行不满，添加占位单元格保持对齐
+                    const itemsInThisRow = endIdx - startIdx;
+                    if (itemsInThisRow < itemsPerRow && rowIndex === totalRows - 1) {
+                        for (let i = 0; i < (itemsPerRow - itemsInThisRow); i++) {
+                            html += `<td class="type-cell" style="border: none; background: transparent;"></td>`;
+                        }
+                    }
+                    
+                    row.innerHTML = html;
+                    tbody.appendChild(row);
+                }
+            }
+        }
+
+        function updateResistance() {
+            const tbody = document.getElementById('resistanceTableBody');
+            tbody.innerHTML = '';
+            
+            const hasSelection = selectedTypes[0] || selectedTypes[1];
+            
+            if (!hasSelection) {
+                // 空状态
+                tbody.innerHTML = `
+                    <tr>
+                        <td class="row-header resistance-table" rowspan="1">复合属性抗性</td>
+                        <td class="category-label-cell">0</td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                        <td class="type-cell" style="border: none; background: transparent;"></td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            const resistances = [];
+            
+            // 遍历所有可能的双属性组合
+            const types = Object.keys(typeNames);
+            for (let i = 0; i < types.length; i++) {
+                for (let j = i + 1; j < types.length; j++) {
+                    const type1 = types[i];
+                    const type2 = types[j];
+                    
+                    // 检查当前选择的防御属性对这个双属性组合的抗性
+                    let isResistant = true;
+                    
+                    selectedTypes.forEach(defType => {
+                        if (!defType) return;
+                        const data = typeData[type1];
+                        const mult1 = (data && data[defType] !== undefined) ? data[defType] : 1;
+                        
+                        const data2 = typeData[type2];
+                        const mult2 = (data2 && data2[defType] !== undefined) ? data2[defType] : 1;
+                        
+                        // 如果任何一个倍率 > 0.5，则不是抗性
+                        if (mult1 > 0.5 || mult2 > 0.5) {
+                            isResistant = false;
+                        }
+                    });
+                    
+                    if (isResistant && (selectedTypes[0] || selectedTypes[1])) {
+                        resistances.push({ type1, type2 });
+                    }
+                }
+            }
+            
+            // 生成抗性表格（支持多行）
+            const count = resistances.length;
+            const itemsPerRow = 10; // 每行显示10个
+            
+            if (count === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="row-header resistance-table" rowspan="1">复合属性抗性</td>
+                    <td class="category-label-cell">${count}</td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                    <td class="type-cell" style="border: none; background: transparent;"></td>
+                `;
+                tbody.appendChild(row);
+            } else {
+                const totalRows = Math.ceil(count / itemsPerRow);
+                
+                for (let rowIndex = 0; rowIndex < totalRows; rowIndex++) {
+                    const row = document.createElement('tr');
+                    let html = '';
+                    
+                    // 第一行：显示标题和计数
+                    if (rowIndex === 0) {
+                        html += `<td class="row-header resistance-table" rowspan="${totalRows}">复合属性抗性</td>`;
+                        html += `<td class="category-label-cell" rowspan="${totalRows}">${count}</td>`;
+                    }
+                    
+                    // 显示当前行的抗性
+                    const startIdx = rowIndex * itemsPerRow;
+                    const endIdx = Math.min(startIdx + itemsPerRow, count);
+                    
+                    for (let i = startIdx; i < endIdx; i++) {
+                        const { type1, type2 } = resistances[i];
                         const color1 = typeNames[type1].class;
                         const color2 = typeNames[type2].class;
                         html += `
@@ -1471,6 +1621,124 @@
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `pokemon-blindspot-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                document.body.removeChild(tempContainer);
+                exportBtn.textContent = originalText;
+                exportBtn.disabled = false;
+            }).catch(err => {
+                console.error('Export failed:', err);
+                alert(currentLang === 'zh' ? '导出失败，请重试' : 'Export failed, please try again');
+                document.body.removeChild(tempContainer);
+                exportBtn.textContent = originalText;
+                exportBtn.disabled = false;
+            });
+        }
+
+        // 导出抗性表格功能
+        function exportResistanceToImage() {
+            const exportBtn = document.querySelector('.resistance-export');
+            const originalText = exportBtn.textContent;
+            exportBtn.textContent = '生成中...';
+            exportBtn.disabled = true;
+            
+            // 获取抗性表格区域
+            const resistanceSection = document.querySelector('.section.resistance');
+            
+            // 创建临时容器
+            const tempContainer = document.createElement('div');
+            tempContainer.style.cssText = `
+                background: transparent;
+                padding: 0;
+                width: auto;
+                display: inline-block;
+                box-sizing: border-box;
+            `;
+            
+            // 克隆抗性内容
+            const resistanceClone = resistanceSection.cloneNode(true);
+            
+            // 调整表格样式
+            const adjustTable = (section) => {
+                const content = section.querySelector('.section-content');
+                if (content) {
+                    content.style.background = 'transparent';
+                }
+                const table = section.querySelector('.compact-table');
+                if (table) {
+                    table.style.fontSize = '12px';
+                    table.style.background = 'transparent';
+                    table.style.border = 'none';
+                    table.style.borderSpacing = '0';
+                }
+                const allCells = section.querySelectorAll('td');
+                allCells.forEach(cell => {
+                    if (cell.style.border === 'none' && cell.style.backgroundColor === 'transparent') return;
+                    cell.style.border = '1px solid #000';
+                });
+                const rowHeaders = section.querySelectorAll('.row-header');
+                rowHeaders.forEach(header => {
+                    header.style.width = '70px';
+                    header.style.backgroundColor = '#ffeb3b';
+                    if (header.classList.contains('resistance-table')) {
+                        header.style.color = '#2980b9';
+                    }
+                });
+                const categoryCells = section.querySelectorAll('.category-label-cell');
+                categoryCells.forEach(cell => {
+                    cell.style.width = '76px';
+                    cell.style.padding = '0 4px';
+                    cell.style.backgroundColor = '#ffffff';
+                    cell.style.color = '#000000';
+                });
+                const dualTypeCells = section.querySelectorAll('.dual-type-cell');
+                dualTypeCells.forEach(cell => {
+                    cell.style.width = '70px';
+                    cell.style.minWidth = '70px';
+                    cell.style.maxWidth = '70px';
+                    cell.style.height = '36px';
+                    cell.style.minHeight = '36px';
+                    cell.style.maxHeight = '36px';
+                    cell.style.padding = '0';
+                    cell.style.boxSizing = 'border-box';
+                    cell.style.background = 'transparent';
+                    cell.style.color = '#000';
+                });
+                const typeTexts = section.querySelectorAll('.type-text');
+                typeTexts.forEach(text => {
+                    text.style.display = 'inline-flex';
+                    text.style.alignItems = 'center';
+                    text.style.justifyContent = 'center';
+                    text.style.height = '100%';
+                    text.style.width = '100%';
+                    text.style.color = '#000';
+                    text.style.fontWeight = 'bold';
+                    text.style.fontSize = '14px';
+                });
+            };
+            
+            adjustTable(resistanceClone);
+            
+            resistanceClone.style.border = 'none';
+            resistanceClone.style.background = 'transparent';
+            resistanceClone.style.boxShadow = 'none';
+            resistanceClone.style.marginBottom = '0';
+            resistanceClone.style.borderRadius = '0';
+            resistanceClone.style.overflow = 'visible';
+            
+            tempContainer.appendChild(resistanceClone);
+            
+            document.body.appendChild(tempContainer);
+            
+            html2canvas(tempContainer, {
+                backgroundColor: null,
+                scale: 4,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `pokemon-resistance-${Date.now()}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 
