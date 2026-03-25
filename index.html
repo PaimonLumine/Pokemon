@@ -455,6 +455,8 @@
             border-color: #9e9e9e;
         }
         
+
+        
         .info-text {
             text-align: center;
             color: #666;
@@ -512,6 +514,12 @@
             <div class="ability-title" data-i18n="abilityTitle">特性效果 (改变防御倍率)</div>
             <div class="ability-controls" id="abilityControls"></div>
             <div class="info-text" data-i18n="abilityInfo">点击按钮切换属性对防御方的伤害倍率</div>
+        </div>
+        
+        <div class="type-selector" style="background: #e3f2fd;">
+            <div class="selector-title">额外打击面 (多选攻击属性)</div>
+            <div class="type-buttons" id="extraAttackControls"></div>
+            <div class="info-text">勾选属性后，计算复合属性（原属性+额外属性）的打击面</div>
         </div>
         
         <div class="section offense">
@@ -673,10 +681,12 @@
         let currentLang = 'zh';
         let selectedTypes = [];
         let abilityEffects = {}; // 存储特性效果 {type: multiplier}
+        let extraAttacks = []; // 存储额外攻击属性
 
         function init() {
             renderTypeButtons();
             renderAbilityControls();
+            renderExtraAttackControls();
             updateDisplay();
         }
 
@@ -732,6 +742,41 @@
             });
         }
 
+        function renderExtraAttackControls() {
+            const container = document.getElementById('extraAttackControls');
+            container.innerHTML = '';
+            
+            Object.keys(typeNames).forEach(type => {
+                const btn = document.createElement('button');
+                btn.className = `type-btn ${typeNames[type].class}`;
+                btn.textContent = typeNames[type][currentLang];
+                
+                // 如果已经在extraAttacks中，添加selected样式
+                if (extraAttacks.includes(type)) {
+                    btn.classList.add('selected');
+                }
+                
+                btn.onclick = () => toggleExtraAttack(type, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function toggleExtraAttack(type, btn) {
+            const index = extraAttacks.indexOf(type);
+            
+            if (index > -1) {
+                // 取消选择
+                extraAttacks.splice(index, 1);
+                btn.classList.remove('selected');
+            } else {
+                // 选择
+                extraAttacks.push(type);
+                btn.classList.add('selected');
+            }
+            
+            updateDisplay();
+        }
+
         function toggleAbility(type, multiplier, btn) {
             const key = `${type}-${multiplier}`;
             const btnContainer = btn.parentElement;
@@ -783,15 +828,16 @@
                     });
                 }
             });
-            
             updateDisplay();
         }
 
         function clearTypes() {
             selectedTypes = [];
             abilityEffects = {};
+            extraAttacks = [];
             renderTypeButtons();
             renderAbilityControls();
+            renderExtraAttackControls();
             updateDisplay();
         }
 
@@ -829,7 +875,7 @@
                 }
             }
             
-            // 计算并显示进攻端
+            // 计算并显示进攻端（包含额外属性）
             updateOffense();
             
             // 计算并显示防守端
@@ -847,11 +893,13 @@
             const notEffective = new Set();
             
             if (hasSelection) {
+                // 合并原属性和额外属性
+                const allAttackTypes = [...selectedTypes.filter(t => t), ...extraAttacks];
+                
                 Object.keys(typeNames).forEach(defType => {
                     let maxMultiplier = 0;
                     
-                    selectedTypes.forEach(type => {
-                        if (!type) return;
+                    allAttackTypes.forEach(type => {
                         const data = typeData[type];
                         const multiplier = (data && data[defType] !== undefined) ? data[defType] : 1;
                         maxMultiplier = Math.max(maxMultiplier, multiplier);
@@ -930,6 +978,9 @@
             
             const blindspots = [];
             
+            // 合并原属性和额外属性
+            const allAttackTypes = [...selectedTypes.filter(t => t), ...extraAttacks];
+            
             // 遍历所有可能的双属性组合
             const types = Object.keys(typeNames);
             for (let i = 0; i < types.length; i++) {
@@ -940,8 +991,7 @@
                     // 检查当前选择的攻击属性对这个双属性组合的伤害
                     let isBlindspot = true;
                     
-                    selectedTypes.forEach(attackType => {
-                        if (!attackType) return;
+                    allAttackTypes.forEach(attackType => {
                         const data = typeData[attackType];
                         if (data) {
                             const mult1 = data[type1] !== undefined ? data[type1] : 1;
@@ -955,7 +1005,7 @@
                         }
                     });
                     
-                    if (isBlindspot && (selectedTypes[0] || selectedTypes[1])) {
+                    if (isBlindspot && allAttackTypes.length > 0) {
                         blindspots.push({ type1, type2 });
                     }
                 }
